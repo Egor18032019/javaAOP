@@ -1,26 +1,26 @@
 package ru.t1.java.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.*;
+import org.springframework.data.jpa.domain.AbstractPersistable;
+import ru.t1.java.demo.util.AccountType;
 
 @Getter
 @Setter
+@Entity
+@Builder
+@NoArgsConstructor
 @AllArgsConstructor
-public class Account {
+@Table(name = "account")
+public class Account extends AbstractPersistable<Long> {
+    @Column(name = "client_id")
     private long clientId;
+    @Column(name = "account_type")
     private AccountType accountType;
+    @Column(name = "balance")
     private double balance;
-
-
-    /**
-     * Перечисление типов счетов
-     */
-    public enum AccountType {
-        //TODo вынести отдельно ? где то еще понадобится ?
-        DEBIT,
-        CREDIT
-    }
 }
 
 
