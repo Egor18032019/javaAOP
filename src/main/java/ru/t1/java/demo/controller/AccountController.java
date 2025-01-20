@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.t1.java.demo.aop.HandlingResult;
 import ru.t1.java.demo.aop.LogException;
 import ru.t1.java.demo.aop.Track;
+import ru.t1.java.demo.dto.AccountDto;
 import ru.t1.java.demo.model.Account;
 import ru.t1.java.demo.service.AccountService;
+
+import java.util.Optional;
 
 
 @Slf4j
@@ -21,12 +24,30 @@ import ru.t1.java.demo.service.AccountService;
 public class AccountController {
     AccountService service;
 
+    @PostMapping(value = "/create")
+    public ResponseEntity<Long> createAccount(@RequestBody AccountDto account) {
+        Long id = service.createAccount(account);
+        return ResponseEntity.ok(id);
+    }
+
     @Track
     @LogException
     @HandlingResult
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Account> getAccount(@PathVariable Long id) throws InterruptedException {
-         Account account = service.getAccount(id);
-        return ResponseEntity.ok(account);
+    public ResponseEntity<AccountDto> getAccount(@PathVariable Long id) throws InterruptedException {
+        Account account = service.getAccount(id);
+        AccountDto accountDto = new AccountDto(account.getClientId(), account.getAccountType(), account.getBalance());
+        return ResponseEntity.ok(accountDto);
     }
+//     создание (англ. create), чтение (read), модификация (update), удаление (delete)
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AccountDto> updateAccount(@PathVariable Long id,
+                                                    @RequestBody AccountDto dto) {
+        Account account = service.update(id, dto).orElseThrow(() -> new RuntimeException("not found"));
+        AccountDto accountDto = new AccountDto(account.getClientId(), account.getAccountType(), account.getBalance());
+
+        return ResponseEntity.ok(accountDto);
+    }
+
 }

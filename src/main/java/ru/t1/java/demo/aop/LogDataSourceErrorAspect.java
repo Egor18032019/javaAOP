@@ -26,14 +26,17 @@ public class LogDataSourceErrorAspect {
 
     }
 
-    @AfterThrowing(pointcut = "@annotation(LogDataSourceError)")
+    @AfterThrowing(pointcut = "@annotation(LogDataSourceError)", throwing = "ex")
     @Order(0)
-    public void logDataExceptionAnnotation(JoinPoint joinPoint) {
-        String stackTrace = Arrays.toString(Thread.currentThread().getStackTrace());
-        String message = Thread.currentThread().getName();
-        String methodSignature = joinPoint.getSignature().getName();
+    public void logDataExceptionAnnotation(JoinPoint joinPoint, Throwable ex) {
+        String stackTrace = Arrays.toString(ex.getStackTrace());
+        System.out.println(stackTrace.length() + " Длина равна");
+        String message =ex.getMessage();   ;
+        String methodSignature = joinPoint.getSignature().toShortString();
+
         DataSourceErrorLog dataSourceErrorLog = new DataSourceErrorLog(stackTrace, message, methodSignature);
         System.out.println(dataSourceErrorLog.toString());
+        System.out.println("Начали сохранять в БД.");
         repository.save(dataSourceErrorLog);
         System.out.println("Ошибку сохранили в базу данных");
     }

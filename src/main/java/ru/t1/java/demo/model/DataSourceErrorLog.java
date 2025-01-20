@@ -18,7 +18,7 @@ public class DataSourceErrorLog extends AbstractPersistable<Long> {
     /**
      * Текст стектрейса исключения в котором произошла ошибка
      */
-    @Column(name = "stack_trace")
+    @Column(name = "stack_trace", length = 10000)
     private String stackTrace;
     /**
      * Текст сообщения исключения

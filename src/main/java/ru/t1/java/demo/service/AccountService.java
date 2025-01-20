@@ -1,9 +1,19 @@
 package ru.t1.java.demo.service;
 
+import aj.org.objectweb.asm.commons.Remapper;
 import ru.t1.java.demo.aop.LogDataSourceError;
+import ru.t1.java.demo.dto.AccountDto;
 import ru.t1.java.demo.model.Account;
 
+import java.util.Optional;
+
 public interface AccountService {
-    @LogDataSourceError
+
     Account getAccount(Long id);
+
+    Long createAccount(AccountDto account);
+
+    Optional<Account> update(Long id, AccountDto account);
+
+    boolean delete(Long id);
 }
