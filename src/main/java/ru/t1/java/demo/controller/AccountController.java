@@ -13,8 +13,6 @@ import ru.t1.java.demo.dto.AccountDto;
 import ru.t1.java.demo.model.Account;
 import ru.t1.java.demo.service.AccountService;
 
-import java.util.Optional;
-
 
 @Slf4j
 @RestController
@@ -39,7 +37,6 @@ public class AccountController {
         AccountDto accountDto = new AccountDto(account.getClientId(), account.getAccountType(), account.getBalance());
         return ResponseEntity.ok(accountDto);
     }
-//     создание (англ. create), чтение (read), модификация (update), удаление (delete)
 
     @PutMapping("/{id}")
     public ResponseEntity<AccountDto> updateAccount(@PathVariable Long id,
