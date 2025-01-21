@@ -27,7 +27,7 @@ public class LogDataSourceErrorAspect {
 
     }
 
-    @Order(0)
+
     @AfterThrowing(pointcut = "@annotation(LogDataSourceError)", throwing = "ex")
     @Transactional
     public void logDataExceptionAnnotation(JoinPoint joinPoint, Throwable ex) {
