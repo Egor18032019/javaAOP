@@ -13,9 +13,9 @@ import ru.t1.java.demo.kafka.KafkaProducer;
 import ru.t1.java.demo.model.DataSourceErrorLog;
 import ru.t1.java.demo.model.MetricModel;
 import ru.t1.java.demo.repository.DataSourceErrorLogRepository;
-import ru.t1.java.demo.util.ErrorType;
 import ru.t1.java.demo.util.TopicName;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -40,10 +40,10 @@ public class LogDataSourceErrorAspect {
         String message = ex.getMessage();
         String methodSignature = joinPoint.getSignature().toShortString();
         DataSourceErrorLog dataSourceErrorLog = new DataSourceErrorLog(stackTrace, message, methodSignature);
-        MetricModel metricModel = new MetricModel();
         UUID id = UUID.randomUUID();
+        MetricModel metricModel = new MetricModel(id , 111d ,methodSignature,message, LocalDateTime.now().toString());
 
-        kafkaProducer.sendTo(TopicName.T1_METRICS_TOPIC, , ErrorType.DATA_SOURCE);
+        kafkaProducer.sendTo(TopicName.T1_METRICS_TOPIC,metricModel );
         try {
             log.info("Начали сохранять в БД.");
             repository.save(dataSourceErrorLog);

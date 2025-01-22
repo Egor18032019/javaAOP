@@ -2,7 +2,6 @@ package ru.t1.java.demo.model;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Setter
@@ -16,5 +15,5 @@ public class MetricModel {
     private String methodName;
     private String methodParameters;
 
-    private LocalDateTime timestamp;
+    private String timestamp;
 }
