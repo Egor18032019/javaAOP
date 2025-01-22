@@ -20,7 +20,7 @@ curl -i -X GET http://localhost:8080/account/100000
 curl -i -X POST http://127.0.0.1:8080/order -H 'Content-Type: application/json' -d '{"userName":"All done !","description":"3","status":"1"}'
 ```
 подключиться к бд из контейнера
-docker exec -it 362ded2296df bash
+docker exec -it 185f767425dd bash
 psql --username=postgres --dbname=t1_demo
 \connect t1_demo
 SELECT * FROM databasechangeloglock;

@@ -22,3 +22,19 @@ logging:
 
 t1:
   scan-path: ru.t1.java.demo
+  kafka:
+    bootstrap:
+      server: broker_1_t1:9092
+    consumer:
+      group-id: t1-demo
+      max.poll.records: 10
+      session-timeout: 10000
+      heartbeat.interval: 3000
+    producer:
+      enable: true
+    topic:
+      t1_demo_metrics: t1_demo_metrics
+      t1_demo_accounts: t1_demo_accounts
+      t1_demo_transactions: t1_demo_transactions
+    listener:
+      poll-timeout: 1000
