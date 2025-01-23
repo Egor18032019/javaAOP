@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.t1.java.demo.aop.LogDataSourceError;
+import ru.t1.java.demo.aop.Metric;
 import ru.t1.java.demo.dto.AccountDto;
 import ru.t1.java.demo.model.Account;
 import ru.t1.java.demo.repository.AccountRepository;
@@ -18,12 +19,14 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository repository;
 
     @Override
+    @Metric(value = 1L)
     @LogDataSourceError
     public Account getAccount(Long id) {
         return repository.findById(id).orElseThrow();
     }
 
     @Override
+    @Metric(1L)
     @LogDataSourceError
     public Long createAccount(AccountDto dto) {
         Account account = Account.builder()
@@ -36,6 +39,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Metric(2L)
     @LogDataSourceError
     public Optional<Account> update(Long id, AccountDto dto) {
 
@@ -47,6 +51,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Metric(1L)
     @LogDataSourceError
     public boolean delete(Long id) {
         return repository.findById(id).map(account -> {

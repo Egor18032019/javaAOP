@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.t1.java.demo.aop.HandlingResult;
 import ru.t1.java.demo.aop.LogException;
-import ru.t1.java.demo.aop.Track;
+import ru.t1.java.demo.aop.Metric;
 import ru.t1.java.demo.dto.AccountDto;
 import ru.t1.java.demo.model.Account;
 import ru.t1.java.demo.service.AccountService;
@@ -28,7 +28,7 @@ public class AccountController {
         return ResponseEntity.ok(id);
     }
 
-    @Track
+
     @LogException
     @HandlingResult
     @GetMapping(value = "/{id}")

@@ -11,9 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class MetricModel {
     private UUID id;
-    private double operatingTime;
+    private long executionTime;
     private String methodName;
     private String methodParameters;
-
-    private String timestamp;
 }
