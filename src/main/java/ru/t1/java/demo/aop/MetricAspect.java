@@ -38,12 +38,7 @@ public class MetricAspect {
 
         long endTime = System.currentTimeMillis();
         long executionTime = endTime - startTime;
-   /*
-       Если время работы метода превышает заданное значение,
-        аспект должен отправлять сообщение в топик Kafka (t1_demo_metrics) c информацией:
-                о времени работы, имени метода и параметрах метода, если таковые имеются.
-       В заголовке передать тип ошибки METRICS.
-     */
+
         if (executionTime > metric.value()) {
             UUID id = UUID.randomUUID();
             MetricModel metricModel = new MetricModel(id, executionTime, joinPoint.getSignature().getName(),

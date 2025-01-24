@@ -27,7 +27,5 @@ public class KafkaProducer {
             template.flush();
         }
     }
-//public void sendTo(String topic, MetricModel model) {
-//    template.send(topic, model);
-//}
+
 }

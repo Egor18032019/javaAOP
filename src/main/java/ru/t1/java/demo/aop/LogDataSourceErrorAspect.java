@@ -31,7 +31,6 @@ public class LogDataSourceErrorAspect {
 
     }
 
-
     @AfterThrowing(pointcut = "@annotation(LogDataSourceError)", throwing = "ex")
     @Transactional
     public void logDataExceptionAnnotation(JoinPoint joinPoint, Throwable ex) {
@@ -52,8 +51,3 @@ public class LogDataSourceErrorAspect {
         }
     }
 }
-/*
-    В первую очередь аспект должен отсылать сообщение в топик t1_demo_metrics.
-    В заголовке должен указываться тип ошибки: DATA_SOURCE;
-    В случае, если отправка не удалась - записать в БД.
- */

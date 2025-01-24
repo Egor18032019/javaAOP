@@ -34,6 +34,16 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public List<Client> registerClients(List<Client> clients) {
+        return null;
+    }
+
+    @Override
+    public Client registerClient(Client client) {
+        return null;
+    }
+
+    @Override
 //    @LogExecution
 //    @Track
 //    @HandlingResult
@@ -45,5 +55,10 @@ public class ClientServiceImpl implements ClientService {
         return Arrays.stream(clients)
                 .map(ClientMapper::toEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void clearMiddleName(List<ClientDto> dtos) {
+
     }
 }
