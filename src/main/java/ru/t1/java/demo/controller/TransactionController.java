@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.t1.java.demo.aop.HandlingResult;
 import ru.t1.java.demo.aop.LogException;
 import ru.t1.java.demo.aop.Track;
-import ru.t1.java.demo.model.Account;
+import ru.t1.java.demo.dto.TransactionDto;
 import ru.t1.java.demo.model.Transaction;
-import ru.t1.java.demo.service.AccountService;
 import ru.t1.java.demo.service.TransactionService;
 
 @Slf4j
@@ -28,5 +27,11 @@ public class TransactionController {
     public ResponseEntity<Transaction> getTransaction(@PathVariable Long id) throws InterruptedException {
         Transaction transaction = service.getTransaction(id);
         return ResponseEntity.ok(transaction);
+    }
+
+    @PostMapping(value = "/create")
+    public ResponseEntity<Long> createAccount(@RequestBody TransactionDto transactionDto) {
+        Long id = service.createTransaction(transactionDto);
+        return ResponseEntity.ok(id);
     }
 }

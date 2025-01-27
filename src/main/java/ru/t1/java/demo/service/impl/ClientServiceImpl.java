@@ -47,7 +47,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Client registerClient(ClientDto clientDto) {
         Client client = clientMapper.toEntityWithId(clientDto);
-        Client saved = repository.save(client);
+        repository.save(client);
         kafkaProducer.send(clientDto, topic);
         return client;
     }

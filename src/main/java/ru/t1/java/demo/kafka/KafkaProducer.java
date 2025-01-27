@@ -5,7 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import ru.t1.java.demo.dto.ClientDto;
+
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -16,7 +17,8 @@ public class KafkaProducer {
 
 
     public void sendTo(String topic, Object o, String error) {
-        ProducerRecord<String, Object> record = new ProducerRecord<>(topic,"key", o);
+        UUID uuid = UUID.randomUUID();
+        ProducerRecord<String, Object> record = new ProducerRecord<>(topic,uuid.toString(), o);
         record.headers().add("error-code", error.getBytes());
         try {
             template.send(record).get();
@@ -29,7 +31,8 @@ public class KafkaProducer {
         }
     }
 
-    public void send(ClientDto clientDto, String topic) {
-        template.send(topic, clientDto);
+    public void send(Object clientDto, String topic) {
+        UUID uuid = UUID.randomUUID();
+        template.send(topic,uuid.toString(),clientDto);
     }
 }
