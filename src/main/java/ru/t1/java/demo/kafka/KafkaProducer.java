@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+import ru.t1.java.demo.dto.ClientDto;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,4 +29,7 @@ public class KafkaProducer {
         }
     }
 
+    public void send(ClientDto clientDto, String topic) {
+        template.send(topic, clientDto);
+    }
 }

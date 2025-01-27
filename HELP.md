@@ -17,7 +17,7 @@ curl -i -X GET http://localhost:8080/transaction/100001
 curl -i -X GET http://localhost:8080/account/100000
 ```
 ```shell
-curl -i -X POST http://127.0.0.1:8080/order -H 'Content-Type: application/json' -d '{"userName":"All done !","description":"3","status":"1"}'
+curl -i -X POST http://127.0.0.1:8080/register -H 'Content-Type: application/json' -d '{"id":"12","first_name":"firstName","last_name":"last_name","middle_name":"middle_name"}'
 ```
 подключиться к бд из контейнера
 docker exec -it 185f767425dd bash

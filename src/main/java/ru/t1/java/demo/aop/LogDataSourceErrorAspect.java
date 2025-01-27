@@ -23,8 +23,8 @@ import java.util.Arrays;
 @Order(0)
 @AllArgsConstructor
 public class LogDataSourceErrorAspect {
-    DataSourceErrorLogRepository repository;
-    KafkaProducer kafkaProducer;
+    private final  DataSourceErrorLogRepository repository;
+    private final KafkaProducer kafkaProducer;
 
     @Pointcut("within(ru.t1.java.demo.*)")
     public void loggingDataMethodsAndSaveInDB() {
