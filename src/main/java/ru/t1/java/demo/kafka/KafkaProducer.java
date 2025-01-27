@@ -15,15 +15,13 @@ public class KafkaProducer {
 
     private final KafkaTemplate<String, Object> template;
 
-
     public void sendTo(String topic, Object o, String error) {
         UUID uuid = UUID.randomUUID();
-        ProducerRecord<String, Object> record = new ProducerRecord<>(topic,uuid.toString(), o);
+        ProducerRecord<String, Object> record = new ProducerRecord<>(topic, uuid.toString(), o);
         record.headers().add("error-code", error.getBytes());
         try {
             template.send(record).get();
-            System.out.println("отправили в кафку - ");
-
+            log.info("отправили в кафку - " + topic);
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
         } finally {
@@ -33,6 +31,7 @@ public class KafkaProducer {
 
     public void send(Object clientDto, String topic) {
         UUID uuid = UUID.randomUUID();
-        template.send(topic,uuid.toString(),clientDto);
+        log.info("отправили в кафку - " + topic);
+        template.send(topic, uuid.toString(), clientDto);
     }
 }

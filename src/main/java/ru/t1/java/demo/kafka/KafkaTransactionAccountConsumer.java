@@ -42,7 +42,6 @@ public class KafkaTransactionAccountConsumer {
                          ) throws IOException {
         log.debug("Client consumer: Обработка новых сообщений");
 
-        System.out.println(message);
         try {
             log.info("Получено сообщение из топика {}: {}", topic, message);
             if (topic.equals(accountsTopic)) {
@@ -57,11 +56,10 @@ public class KafkaTransactionAccountConsumer {
                 log.warn("Неизвестный топик: {}", topic);
             }
         } finally {
-            System.out.println("         !!!!!!!!!!!!!!!11            ");
             ack.acknowledge();
         }
 
 
-        log.debug("Client consumer: записи обработаны");
+        log.debug("KafkaTransactionAccountConsumer consumer: записи обработаны");
     }
 }
