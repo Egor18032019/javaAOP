@@ -24,7 +24,8 @@ t1:
   scan-path: ru.t1.java.demo
   kafka:
     bootstrap:
-      server: broker_1_t1:9092
+      server: localhost:9092
+      #      broker_1_t1:9092
     consumer:
       group-id: t1-demo
       max.poll.records: 10

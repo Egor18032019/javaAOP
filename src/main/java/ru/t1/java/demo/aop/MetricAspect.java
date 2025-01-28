@@ -1,26 +1,28 @@
 package ru.t1.java.demo.aop;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.t1.java.demo.kafka.KafkaProducer;
 import ru.t1.java.demo.model.MetricModel;
 import ru.t1.java.demo.util.ErrorType;
-import ru.t1.java.demo.util.TopicName;
 
 import java.util.UUID;
 
 @Slf4j
 @Aspect
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MetricAspect {
 
     KafkaProducer kafkaProducer;
+    @Value("${t1.kafka.topic.t1_demo_metrics}")
+    private String metricsTopic;
 
     @Around("@annotation(ru.t1.java.demo.aop.Metric)")
     public Object measureExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -44,7 +46,7 @@ public class MetricAspect {
             MetricModel metricModel = new MetricModel(id, executionTime, joinPoint.getSignature().getName(),
                     getMethodParameters(joinPoint));
 
-            kafkaProducer.sendTo(TopicName.T1_METRICS_TOPIC, metricModel, ErrorType.METRICS.name());
+            kafkaProducer.sendTo(metricsTopic, metricModel, ErrorType.METRICS.name());
         }
 
         return result;
