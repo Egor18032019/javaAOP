@@ -14,7 +14,7 @@
 - добавить статус [ARRESTED, BLOCKED, CLOSED, OPEN]
 
 - добавить уникальный accountId
-t a
+
 - добавить поле frozenAmount;
 
 1.3 Сущности Client добавить уникальный clientId

@@ -4,7 +4,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.jpa.domain.AbstractPersistable;
+
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -23,6 +26,9 @@ public class Client extends AbstractPersistable<Long> {
 
     @Column(name = "middle_name")
     private String middleName;
+
+    @UuidGenerator
+    private UUID clientId;
     @Override
     public void setId(Long id) {
         super.setId(id);
