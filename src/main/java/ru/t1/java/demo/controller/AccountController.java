@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.t1.java.demo.aop.HandlingResult;
 import ru.t1.java.demo.aop.LogException;
-import ru.t1.java.demo.aop.Metric;
 import ru.t1.java.demo.dto.AccountDto;
 import ru.t1.java.demo.model.Account;
 import ru.t1.java.demo.service.AccountService;
@@ -34,7 +33,7 @@ public class AccountController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<AccountDto> getAccount(@PathVariable Long id) throws InterruptedException {
         Account account = service.getAccount(id);
-        AccountDto accountDto = new AccountDto(account.getClientId(), account.getAccountType(), account.getBalance());
+        AccountDto accountDto = new AccountDto(account.getClientId(), account.getAccountType(), account.getBalance(),account.getAccountStatus());
         return ResponseEntity.ok(accountDto);
     }
 
@@ -42,7 +41,7 @@ public class AccountController {
     public ResponseEntity<AccountDto> updateAccount(@PathVariable Long id,
                                                     @RequestBody AccountDto dto) {
         Account account = service.update(id, dto).orElseThrow(() -> new RuntimeException("not found"));
-        AccountDto accountDto = new AccountDto(account.getClientId(), account.getAccountType(), account.getBalance());
+        AccountDto accountDto = new AccountDto(account.getClientId(), account.getAccountType(), account.getBalance(),account.getAccountStatus());
 
         return ResponseEntity.ok(accountDto);
     }

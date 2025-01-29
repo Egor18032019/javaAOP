@@ -39,6 +39,7 @@ public class KafkaTransactionAccountConsumer {
     public void listener(@Payload String message,
                          Acknowledgment ack,
                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic
+//                         @Header(KafkaHeaders.NATIVE_HEADERS) Map<String, Object> nativeHeaders
                          ) throws IOException {
         log.debug("Client consumer: Обработка новых сообщений");
 

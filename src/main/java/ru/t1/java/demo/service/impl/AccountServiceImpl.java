@@ -38,6 +38,7 @@ public class AccountServiceImpl implements AccountService {
                 .clientId(dto.getClientId())
                 .accountType(dto.getAccountType())
                 .balance(dto.getBalance())
+                .accountStatus(dto.getAccountStatus())
                 .build();
         kafkaProducer.send(dto, topic);
         return account.getId();
@@ -71,6 +72,7 @@ public class AccountServiceImpl implements AccountService {
                 .clientId(accountDto.getClientId())
                 .accountType(accountDto.getAccountType())
                 .balance(accountDto.getBalance())
+                .accountStatus(accountDto.getAccountStatus())
                 .build();
         repository.save(account);
     }

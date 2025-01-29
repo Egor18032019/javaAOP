@@ -21,11 +21,11 @@ curl -i -X POST http://127.0.0.1:8080/register -H 'Content-Type: application/jso
 ```
 
 ```shell
-curl -i -X POST http://127.0.0.1:8080/account/create -H 'Content-Type: application/json' -d '{"client_id":"1234","account_type":"DEBIT","balance":"1"}'
+curl -i -X POST http://127.0.0.1:8080/account/create -H 'Content-Type: application/json' -d '{"client_id":"1","account_type":"DEBIT","balance":"12","account_status":"ARRESTED"}'
 ```
 
 ```shell
-curl -i -X POST http://127.0.0.1:8080/account/create -H 'Content-Type: application/json' -d '{"client_id":"1234","account_type":"DEBIT","balance":"1"}'
+curl -i -X POST http://127.0.0.1:8080/transaction/create -H 'Content-Type: application/json' -d '{"account_id":"1234","amount":"2","transactionTime":"2023,10,1,12,34,56"}'
 ```
 подключиться к бд из контейнера
 docker exec -it 185f767425dd bash
@@ -35,6 +35,7 @@ SELECT * FROM databasechangeloglock;
 SELECT * FROM datasource_error_log;
 SELECT * FROM client;
 SELECT * FROM transactions;
+SELECT * FROM account;
 
 INSERT INTO datasource_error_log (id,stack_trace, message, method_signature)VALUES (100000,'текст стектрейса', 'текст сообщения', 'сигнатура метода');
 INSERT INTO transactions (id,account_id, amount, transaction_time)
