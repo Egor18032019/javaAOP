@@ -20,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MetricAspect {
 
-    KafkaProducer kafkaProducer;
+    private final KafkaProducer kafkaProducer;
     @Value("${t1.kafka.topic.t1_demo_metrics}")
     private String metricsTopic;
 
