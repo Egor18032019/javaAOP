@@ -1,0 +1,52 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: t1-java-demo
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/t1_demo"
+    username: "postgres"
+    password: "0000"
+    driverClassName: org.postgresql.Driver
+  liquibase:
+    enabled: false
+    change-log: db/changelog/db.changelog-master.xml
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+
+
+logging:
+  level:
+    ROOT: INFO
+    ru.t1.java.demo.controller.ClientController: DEBUG
+
+t1:
+  scan-path: ru.t1.java.demo
+  kafka:
+    bootstrap:
+      server: localhost:9092
+      #      broker_1_t1:9092
+    consumer:
+      group-id: t1-demo-service-2
+      max.poll.records: 10
+      session-timeout: 10000
+      heartbeat.interval: 3000
+    producer:
+      enable: true
+    topic:
+      client_registration: t1_demo_client_registration
+      t1_demo_metrics: t1_demo_metrics
+      t1_demo_accounts: t1_demo_accounts
+      t1_demo_transactions: t1_demo_transactions
+      t1_demo_transaction_accept: t1_demo_transaction_accept
+    listener:
+      poll-timeout: 1000
+trusted:
+  packages:
+    t1:
+      java:
+        demo:
+          dto:
