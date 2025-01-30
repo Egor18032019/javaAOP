@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import ru.t1.java.demo.util.AccountStatus;
 import ru.t1.java.demo.util.AccountType;
 
+import java.util.UUID;
+
 /**
  * DTO for {@link ru.t1.java.demo.model.Account}
  */
@@ -18,6 +20,8 @@ import ru.t1.java.demo.util.AccountType;
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AccountDto {
+    @JsonProperty("account_id")
+    private UUID account_id;
     @JsonProperty("client_id")
     private long clientId;
     @JsonProperty("account_type")

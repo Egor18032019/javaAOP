@@ -18,7 +18,7 @@ import java.util.UUID;
 @Table(name = "transactions")
 public class Transaction extends AbstractPersistable<Long> {
     @Column(name = "account_id")
-    private long accountId;
+    private UUID accountId;
     @Column(name = "amount")
     private double amount;
     @Column(name = "completed_time")

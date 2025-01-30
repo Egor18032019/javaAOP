@@ -12,6 +12,8 @@ import ru.t1.java.demo.dto.AccountDto;
 import ru.t1.java.demo.model.Account;
 import ru.t1.java.demo.service.AccountService;
 
+import java.util.UUID;
+
 
 @Slf4j
 @RestController
@@ -22,18 +24,18 @@ public class AccountController {
     AccountService service;
 
     @PostMapping(value = "/create")
-    public ResponseEntity<Long> createAccount(@RequestBody AccountDto account) {
-        Long id = service.createAccount(account);
-        return ResponseEntity.ok(id);
+    public ResponseEntity createAccount(@RequestBody AccountDto account) {
+        service.sendAccountToKafka(account);
+        return ResponseEntity.ok().build();
     }
 
 
     @LogException
     @HandlingResult
     @GetMapping(value = "/{id}")
-    public ResponseEntity<AccountDto> getAccount(@PathVariable Long id) throws InterruptedException {
-        Account account = service.getAccount(id);
-        AccountDto accountDto = new AccountDto(account.getClientId(), account.getAccountType(), account.getBalance(),account.getAccountStatus());
+    public ResponseEntity<AccountDto> getAccount(@PathVariable String id) throws InterruptedException {
+        Account account = service.getAccount(UUID.fromString(id));
+        AccountDto accountDto = new AccountDto(account.getAccountId(),account.getClientId(), account.getAccountType(), account.getBalance(),account.getAccountStatus());
         return ResponseEntity.ok(accountDto);
     }
 
@@ -41,7 +43,7 @@ public class AccountController {
     public ResponseEntity<AccountDto> updateAccount(@PathVariable Long id,
                                                     @RequestBody AccountDto dto) {
         Account account = service.update(id, dto).orElseThrow(() -> new RuntimeException("not found"));
-        AccountDto accountDto = new AccountDto(account.getClientId(), account.getAccountType(), account.getBalance(),account.getAccountStatus());
+        AccountDto accountDto = new AccountDto(account.getAccountId(),account.getClientId(), account.getAccountType(), account.getBalance(),account.getAccountStatus());
 
         return ResponseEntity.ok(accountDto);
     }

@@ -10,4 +10,5 @@ public interface TransactionService {
     Long createTransaction(TransactionDto transactionDto);
 
     void saveTransaction(TransactionDto transactionDto);
+    void saveTransaction(Transaction transaction);
 }

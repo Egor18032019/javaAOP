@@ -10,19 +10,21 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * DTO for {@link ru.t1.java.demo.model.Transaction}
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TransactionDto {
-    @JsonProperty("account_id")
+public class TransactionAccept {
+//    {clientId, accountId, transactionId, timestamp, transaction.amount, account.balance}
+
+    private Long clientId;
     private UUID accountId;
-    @JsonProperty("amount")
-    private double amount;
-    @JsonProperty("transaction_time")
-    private LocalDateTime transactionTime;
+    private Long transactionId;
+    private LocalDateTime timestamp;
+
+    @JsonProperty("transaction_amount")
+    private Double transactionAmount;
+    @JsonProperty("account_balance")
+    private Double accountBalance;
 }

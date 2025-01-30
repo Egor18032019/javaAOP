@@ -12,6 +12,8 @@ import ru.t1.java.demo.model.Transaction;
 import ru.t1.java.demo.repository.TransactionRepository;
 import ru.t1.java.demo.service.TransactionService;
 
+import java.time.LocalDateTime;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -35,7 +37,8 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction transaction = Transaction.builder()
                 .accountId(transactionDto.getAccountId())
                 .amount(transactionDto.getAmount())
-                .transactionTime(transactionDto.getTransactionTime())
+                .requestedTime(transactionDto.getTransactionTime())
+                .completedTime(LocalDateTime.now())
                 .build();
         kafkaProducer.send(transactionDto, topic);
         return transaction.getId();
@@ -45,9 +48,15 @@ public class TransactionServiceImpl implements TransactionService {
     public void saveTransaction(TransactionDto transactionDto) {
         Transaction transaction = Transaction.builder()
                 .accountId(transactionDto.getAccountId())
-                .transactionTime(transactionDto.getTransactionTime())
+                .requestedTime(transactionDto.getTransactionTime())
+                .completedTime(LocalDateTime.now())
                 .amount(transactionDto.getAmount())
                 .build();
+        repository.save(transaction);
+    }
+
+    @Override
+    public void saveTransaction(Transaction transaction) {
         repository.save(transaction);
     }
 }

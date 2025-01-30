@@ -38,6 +38,7 @@ t1:
       t1_demo_metrics: t1_demo_metrics
       t1_demo_accounts: t1_demo_accounts
       t1_demo_transactions: t1_demo_transactions
+      t1_demo_transaction_accept: t1_demo_transaction_accept
     listener:
       poll-timeout: 1000
 trusted:

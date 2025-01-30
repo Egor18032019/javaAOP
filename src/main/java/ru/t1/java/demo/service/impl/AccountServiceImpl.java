@@ -13,6 +13,7 @@ import ru.t1.java.demo.repository.AccountRepository;
 import ru.t1.java.demo.service.AccountService;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -23,17 +24,18 @@ public class AccountServiceImpl implements AccountService {
     @Value("${t1.kafka.topic.t1_demo_accounts}")
     private String topic;
 
+
     @Override
     @Metric(value = 1L)
     @LogDataSourceError
-    public Account getAccount(Long id) {
-        return repository.findById(id).orElseThrow();
+    public Account getAccount(UUID id) {
+        return repository.findByAccountId(id);
     }
 
     @Override
     @Metric(1L)
     @LogDataSourceError
-    public Long createAccount(AccountDto dto) {
+    public void sendAccountToKafka(AccountDto dto) {
         Account account = Account.builder()
                 .clientId(dto.getClientId())
                 .accountType(dto.getAccountType())
@@ -41,7 +43,7 @@ public class AccountServiceImpl implements AccountService {
                 .accountStatus(dto.getAccountStatus())
                 .build();
         kafkaProducer.send(dto, topic);
-        return account.getId();
+
     }
 
     @Override
@@ -67,13 +69,18 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void saveAccount(AccountDto accountDto) {
+    public void saveAccountDto(AccountDto accountDto) {
         Account account = Account.builder()
                 .clientId(accountDto.getClientId())
                 .accountType(accountDto.getAccountType())
                 .balance(accountDto.getBalance())
                 .accountStatus(accountDto.getAccountStatus())
                 .build();
+        repository.save(account);
+    }
+
+    @Override
+    public void saveAccount(Account account) {
         repository.save(account);
     }
 }
