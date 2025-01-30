@@ -33,7 +33,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Long createTransaction(TransactionDto transactionDto) {
+    public void sendTransactionInKafka(TransactionDto transactionDto) {
         Transaction transaction = Transaction.builder()
                 .accountId(transactionDto.getAccountId())
                 .amount(transactionDto.getAmount())
@@ -41,11 +41,11 @@ public class TransactionServiceImpl implements TransactionService {
                 .completedTime(LocalDateTime.now())
                 .build();
         kafkaProducer.send(transactionDto, topic);
-        return transaction.getId();
+
     }
 
     @Override
-    public void saveTransaction(TransactionDto transactionDto) {
+    public Transaction saveTransactionDTO(TransactionDto transactionDto) {
         Transaction transaction = Transaction.builder()
                 .accountId(transactionDto.getAccountId())
                 .requestedTime(transactionDto.getTransactionTime())
@@ -53,6 +53,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .amount(transactionDto.getAmount())
                 .build();
         repository.save(transaction);
+        return transaction;
     }
 
     @Override

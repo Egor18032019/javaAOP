@@ -26,6 +26,7 @@ public class AccountController {
     @PostMapping(value = "/create")
     public ResponseEntity createAccount(@RequestBody AccountDto account) {
         service.sendAccountToKafka(account);
+        //todo сделать ответ(+или-) на создание аккаунта
         return ResponseEntity.ok().build();
     }
 

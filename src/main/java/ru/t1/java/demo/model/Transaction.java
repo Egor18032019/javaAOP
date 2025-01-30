@@ -3,7 +3,6 @@ package ru.t1.java.demo.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
-import org.springframework.data.jpa.domain.AbstractPersistable;
 import ru.t1.java.demo.util.TransactionStatus;
 
 import java.time.LocalDateTime;
@@ -16,7 +15,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "transactions")
-public class Transaction extends AbstractPersistable<Long> {
+public class Transaction  {
+    @Id
+    @GeneratedValue
+    @UuidGenerator
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID transactionId;
+
     @Column(name = "account_id")
     private UUID accountId;
     @Column(name = "amount")
@@ -27,8 +32,4 @@ public class Transaction extends AbstractPersistable<Long> {
     private LocalDateTime requestedTime;
     @Enumerated(EnumType.STRING)
     private TransactionStatus transactionStatus;
-
-    @UuidGenerator
-    private UUID transactionId;
-
 }

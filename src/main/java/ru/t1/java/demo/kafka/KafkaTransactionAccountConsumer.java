@@ -17,10 +17,9 @@ import ru.t1.java.demo.model.Account;
 import ru.t1.java.demo.model.Transaction;
 import ru.t1.java.demo.service.AccountService;
 import ru.t1.java.demo.service.TransactionService;
-import ru.t1.java.demo.util.TransactionStatus;
+import ru.t1.java.demo.util.AccountStatus;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -59,27 +58,17 @@ public class KafkaTransactionAccountConsumer {
             }
             else if (topic.equals(transactionsTopic)) {
                 TransactionDto transactionDto = objectMapper.readValue(message, TransactionDto.class);
+                Transaction transaction=  transactionService.saveTransactionDTO(transactionDto);
                 Account acc = accountService.getAccount(transactionDto.getAccountId());
                 if (acc.getAccountStatus().name().equals("OPEN")) {
-
-                    Transaction transaction = Transaction.builder()
-                            .accountId(acc.getAccountId())
-                            .requestedTime(transactionDto.getTransactionTime())
-                            .completedTime(LocalDateTime.now())
-                            .amount(transactionDto.getAmount())
-                            .transactionStatus(TransactionStatus.REQUESTED)
-                            .build();
-                    transactionService.saveTransaction(transaction);
                     acc.setBalance(acc.getBalance() + transactionDto.getAmount());
+                    acc.setAccountStatus(AccountStatus.CLOSED); //todo если не поменять то закольцованность
                     accountService.saveAccount(acc);
-                    /*
 
-    отправляет сообщение в топик t1_demo_transaction_accept с информацией {clientId, accountId, transactionId, timestamp, transaction.amount, account.balance}
-                     */
                     TransactionAccept transactionAccept = TransactionAccept.builder()
                             .clientId(acc.getClientId())
                             .accountId(transactionDto.getAccountId())
-                            .transactionId(transaction.getId())
+                            .transactionId(transaction.getTransactionId())
                             .timestamp(transactionDto.getTransactionTime())
                             .transactionAmount(transactionDto.getAmount())
                             .accountBalance(acc.getBalance())
@@ -87,7 +76,6 @@ public class KafkaTransactionAccountConsumer {
 
                     kafkaProducer.send(transactionsTopic,transactionAccept.toString());
                 }
-                transactionService.saveTransaction(transactionDto);
             } else {
                 log.warn("Неизвестный топик: {}", topic);
             }

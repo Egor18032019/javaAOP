@@ -7,8 +7,8 @@ public interface TransactionService {
 
     Transaction getTransaction(Long id);
 
-    Long createTransaction(TransactionDto transactionDto);
+    void sendTransactionInKafka(TransactionDto transactionDto);
 
-    void saveTransaction(TransactionDto transactionDto);
+    Transaction saveTransactionDTO(TransactionDto transactionDto);
     void saveTransaction(Transaction transaction);
 }

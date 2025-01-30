@@ -21,11 +21,11 @@ curl -i -X POST http://127.0.0.1:8080/register -H 'Content-Type: application/jso
 ```
 
 ```shell
-curl -i -X POST http://127.0.0.1:8080/account/create -H 'Content-Type: application/json' -d '{"client_id":"1","account_type":"DEBIT","balance":"12","account_status":"ARRESTED"}'
+curl -i -X POST http://127.0.0.1:8080/account/create -H 'Content-Type: application/json' -d '{"client_id":"1","account_type":"DEBIT","balance":"12","account_status":"OPEN"}'
 ```
 
 ```shell
-curl -i -X POST http://127.0.0.1:8080/transaction/create -H 'Content-Type: application/json' -d '{"account_id":"dc859268-9e0c-482d-a014-37a6557aea8c","amount":"2","transactionTime":"2023,10,1,12,34,56"}'
+curl -i -X POST http://127.0.0.1:8080/transaction/create -H 'Content-Type: application/json' -d '{"account_id":"4a0ecc15-6511-4d48-b288-7f43eab0c82c","amount":"2","transactionTime":"2023,10,1,12,34,56"}'
 ```
 подключиться к бд из контейнера
 docker exec -it 185f767425dd bash

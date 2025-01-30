@@ -20,6 +20,7 @@ import ru.t1.java.demo.service.TransactionService;
 @AllArgsConstructor
 public class TransactionController {
     TransactionService service;
+
     @Track
     @LogException
     @HandlingResult
@@ -30,8 +31,9 @@ public class TransactionController {
     }
 
     @PostMapping(value = "/create")
-    public ResponseEntity<Long> createAccount(@RequestBody TransactionDto transactionDto) {
-        Long id = service.createTransaction(transactionDto);
-        return ResponseEntity.ok(id);
+    public ResponseEntity  createAccount(@RequestBody TransactionDto transactionDto) {
+        service.sendTransactionInKafka(transactionDto);
+        //todo сделать ответ(+или-)
+        return ResponseEntity.ok().build();
     }
 }

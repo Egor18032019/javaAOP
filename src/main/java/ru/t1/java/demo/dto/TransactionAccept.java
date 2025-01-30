@@ -20,7 +20,7 @@ public class TransactionAccept {
 
     private Long clientId;
     private UUID accountId;
-    private Long transactionId;
+    private UUID transactionId;
     private LocalDateTime timestamp;
 
     @JsonProperty("transaction_amount")
