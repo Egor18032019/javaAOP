@@ -82,8 +82,6 @@ public class KafkaTransactionAccountConsumer {
         } finally {
             ack.acknowledge();
         }
-
-
         log.debug("KafkaTransactionAccountConsumer consumer: записи обработаны");
     }
 }
