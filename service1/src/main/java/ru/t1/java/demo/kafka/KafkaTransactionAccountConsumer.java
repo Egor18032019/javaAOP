@@ -62,7 +62,7 @@ public class KafkaTransactionAccountConsumer {
                 Account acc = accountService.getAccount(transactionDto.getAccountId());
                 if (acc.getAccountStatus().name().equals("OPEN")) {
                     acc.setBalance(acc.getBalance() + transactionDto.getAmount());
-                    acc.setAccountStatus(AccountStatus.CLOSED); //todo если не поменять то закольцованность
+//                    acc.setAccountStatus(AccountStatus.CLOSED); //todo если не поменять то закольцованность
                     accountService.saveAccount(acc);
 
                     TransactionAccept transactionAccept = TransactionAccept.builder()
@@ -74,7 +74,7 @@ public class KafkaTransactionAccountConsumer {
                             .accountBalance(acc.getBalance())
                             .build();
 
-                    kafkaProducer.send(transactionsTopic,transactionAccept.toString());
+                    kafkaProducer.send(transactionAccept, transactionsTopicAccept);
                 }
             } else {
                 log.warn("Неизвестный топик: {}", topic);

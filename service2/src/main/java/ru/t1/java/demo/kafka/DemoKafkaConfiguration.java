@@ -28,6 +28,7 @@ public class DemoKafkaConfiguration {
     private String metricsTopic;
     @Value("${t1.kafka.topic.t1_demo_transactions}")
     private String transactionsTopic;
+
     @Bean
     public ProducerFactory<String, Object> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
@@ -42,7 +43,6 @@ public class DemoKafkaConfiguration {
         Map<String, Object> props = new HashMap<>();
         // Настройки подключения к Kafka
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, server);
-
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"); // или "latest"

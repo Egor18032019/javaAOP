@@ -12,7 +12,8 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+#      ddl-auto: create-drop
+      ddl-auto: create
 
 
 logging:
@@ -29,7 +30,6 @@ t1:
     consumer:
       group-id: t1-demo
       max.poll.records: 10
-      session-timeout: 10000
       heartbeat.interval: 3000
     producer:
       enable: true

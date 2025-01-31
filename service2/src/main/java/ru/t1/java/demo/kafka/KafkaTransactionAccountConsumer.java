@@ -15,11 +15,13 @@ import ru.t1.java.demo.dto.TransactionAccept;
 import ru.t1.java.demo.dto.TransactionDto;
 import ru.t1.java.demo.model.Account;
 import ru.t1.java.demo.model.Transaction;
+import ru.t1.java.demo.repository.TransactionRepository;
 import ru.t1.java.demo.service.AccountService;
 import ru.t1.java.demo.service.TransactionService;
 import ru.t1.java.demo.util.AccountStatus;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,6 +31,7 @@ public class KafkaTransactionAccountConsumer {
     private final ObjectMapper objectMapper;
     private final AccountService accountService;
     private final KafkaProducer kafkaProducer;
+    private final TransactionRepository transactionRepository;
 
     private final TransactionService transactionService;
     @Value("${t1.kafka.topic.t1_demo_accounts}")
@@ -38,10 +41,14 @@ public class KafkaTransactionAccountConsumer {
     private String transactionsTopic;
     @Value("${t1.kafka.topic.t1_demo_transaction_accept}")
     private String transactionsTopicAccept;
+
+    @Value("${t1.kafka.transaction.timeout}")
+    private Long transactionTimeout;
+    @Value("${t1.kafka.transaction.max-transactions}")
+    private int maxTransaction;
+
     @KafkaListener(id = "${t1.kafka.consumer.group-id}",
-            topics = {"${t1.kafka.topic.t1_demo_accounts}",
-                    "${t1.kafka.topic.t1_demo_transactions}"
-            },
+            topics = {"${t1.kafka.topic.t1_demo_transaction_accept}"},
             containerFactory = "kafkaListenerContainerFactory")
     public void listener(@Payload String message,
                          Acknowledgment ack,
@@ -63,6 +70,11 @@ public class KafkaTransactionAccountConsumer {
  */
         try {
             log.info("Получено сообщение из топика {}: {}", topic, message);
+            LocalDateTime endTime = LocalDateTime.now();
+            // запрос в бд и получение списка транзакций за время endTime - transactionTimeout
+            LocalDateTime startTime = endTime.minusSeconds(transactionTimeout);
+            int transactionCount = transactionRepository.countByAccountIdAndTimestampBetween(entity.getAccountId(), startTime, endTime);
+            // если список транзакций больше maxTransaction то N транзакциям присвоить статус BLOCKED
 
 
         } finally {

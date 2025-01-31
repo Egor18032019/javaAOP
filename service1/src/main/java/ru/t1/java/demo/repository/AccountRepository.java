@@ -5,6 +5,6 @@ import ru.t1.java.demo.model.Account;
 
 import java.util.UUID;
 
-public interface AccountRepository extends JpaRepository<Account, Long> {
+public interface AccountRepository extends JpaRepository<Account, UUID> {
     Account findByAccountId(UUID accountId);
 }

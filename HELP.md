@@ -25,10 +25,10 @@ curl -i -X POST http://127.0.0.1:8080/account/create -H 'Content-Type: applicati
 ```
 
 ```shell
-curl -i -X POST http://127.0.0.1:8080/transaction/create -H 'Content-Type: application/json' -d '{"account_id":"4a0ecc15-6511-4d48-b288-7f43eab0c82c","amount":"2","transactionTime":"2023,10,1,12,34,56"}'
+curl -i -X POST http://127.0.0.1:8080/transaction/create -H 'Content-Type: application/json' -d '{"account_id":"06268031-c8cf-4120-9f4d-cb1acd257d85","amount":"2","transactionTime":"2023,10,1,12,34,56"}'
 ```
 подключиться к бд из контейнера
-docker exec -it 185f767425dd bash
+docker exec -it 7ad99874ef58 bash
 psql --username=postgres --dbname=t1_demo
 \connect t1_demo
 SELECT * FROM databasechangeloglock;
