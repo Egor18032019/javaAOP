@@ -10,22 +10,14 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
-import ru.t1.java.demo.dto.AccountDto;
 import ru.t1.java.demo.dto.TransactionAccept;
-import ru.t1.java.demo.dto.TransactionDto;
 import ru.t1.java.demo.dto.TransactionResultDto;
-import ru.t1.java.demo.model.Account;
 import ru.t1.java.demo.model.Transaction;
-import ru.t1.java.demo.repository.AccountRepository;
 import ru.t1.java.demo.repository.TransactionRepository;
-import ru.t1.java.demo.service.AccountService;
-import ru.t1.java.demo.service.TransactionService;
-import ru.t1.java.demo.util.AccountStatus;
 import ru.t1.java.demo.util.TransactionStatus;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor

@@ -36,10 +36,6 @@ t1:
     producer:
       enable: true
     topic:
-      client_registration: t1_demo_client_registration
-      t1_demo_metrics: t1_demo_metrics
-      t1_demo_accounts: t1_demo_accounts
-      t1_demo_transactions: t1_demo_transactions
       t1_demo_transaction_accept: t1_demo_transaction_accept
       t1_demo_transaction_result: t1_demo_transaction_result
     listener:

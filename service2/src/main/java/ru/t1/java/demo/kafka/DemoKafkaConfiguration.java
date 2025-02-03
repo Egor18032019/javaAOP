@@ -1,7 +1,6 @@
 package ru.t1.java.demo.kafka;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -20,14 +19,10 @@ import java.util.Map;
 @Slf4j
 @Configuration
 public class DemoKafkaConfiguration {
-    @Value("${t1.kafka.topic.t1_demo_accounts}")
-    private String accountsTopic;
+
     @Value("${t1.kafka.bootstrap.server}")
     private String server;
-    @Value("${t1.kafka.topic.t1_demo_metrics}")
-    private String metricsTopic;
-    @Value("${t1.kafka.topic.t1_demo_transactions}")
-    private String transactionsTopic;
+
 
     @Bean
     public ProducerFactory<String, Object> producerFactory() {
@@ -65,18 +60,4 @@ public class DemoKafkaConfiguration {
         return factory;
     }
 
-    @Bean
-    public NewTopic metricsTopic() {
-        return new NewTopic(metricsTopic, 1, (short) 1);
-    }
-
-    @Bean
-    public NewTopic accountsTopic() {
-        return new NewTopic(accountsTopic, 1, (short) 1);
-    }
-
-    @Bean
-    public NewTopic transactionTopic() {
-        return new NewTopic(transactionsTopic, 1, (short) 1);
-    }
 }
