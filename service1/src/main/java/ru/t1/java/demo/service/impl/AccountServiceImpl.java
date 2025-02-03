@@ -49,7 +49,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Metric(2L)
     @LogDataSourceError
-    public Optional<Account> update(Long id, AccountDto dto) {
+    public Optional<Account> update(UUID id, AccountDto dto) {
 
         return Optional.ofNullable(repository.findById(id).map(account -> {
             account.setAccountType(dto.getAccountType());
@@ -61,7 +61,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Metric(1L)
     @LogDataSourceError
-    public boolean delete(Long id) {
+    public boolean delete(UUID id) {
         return repository.findById(id).map(account -> {
             repository.delete(account);
             return true;

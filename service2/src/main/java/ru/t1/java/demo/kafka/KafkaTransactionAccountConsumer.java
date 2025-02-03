@@ -13,15 +13,19 @@ import org.springframework.stereotype.Component;
 import ru.t1.java.demo.dto.AccountDto;
 import ru.t1.java.demo.dto.TransactionAccept;
 import ru.t1.java.demo.dto.TransactionDto;
+import ru.t1.java.demo.dto.TransactionResultDto;
 import ru.t1.java.demo.model.Account;
 import ru.t1.java.demo.model.Transaction;
+import ru.t1.java.demo.repository.AccountRepository;
 import ru.t1.java.demo.repository.TransactionRepository;
 import ru.t1.java.demo.service.AccountService;
 import ru.t1.java.demo.service.TransactionService;
 import ru.t1.java.demo.util.AccountStatus;
+import ru.t1.java.demo.util.TransactionStatus;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,18 +33,12 @@ import java.time.LocalDateTime;
 public class KafkaTransactionAccountConsumer {
 
     private final ObjectMapper objectMapper;
-    private final AccountService accountService;
+
     private final KafkaProducer kafkaProducer;
     private final TransactionRepository transactionRepository;
 
-    private final TransactionService transactionService;
-    @Value("${t1.kafka.topic.t1_demo_accounts}")
-    private String accountsTopic;
-
-    @Value("${t1.kafka.topic.t1_demo_transactions}")
-    private String transactionsTopic;
-    @Value("${t1.kafka.topic.t1_demo_transaction_accept}")
-    private String transactionsTopicAccept;
+    @Value("${t1.kafka.topic.t1_demo_transaction_result}")
+    private String transactionsTopicResult;
 
     @Value("${t1.kafka.transaction.timeout}")
     private Long transactionTimeout;
@@ -60,23 +58,41 @@ public class KafkaTransactionAccountConsumer {
 - Если транзакции по одному и тому же клиенту и счету приходят больше N раз в Т времени (настраивается в конфиге)
 и timestamp транзакции попадает в этот период,
 то N транзакциям присвоить статус BLOCKED,
-сообщение со статусом, id счета и id транзакции отправить в топик t1_demo_transaction_result
-
 
 - Если сумма списания в транзакции больше, чем баланс счета
     -> отправить сообщение со статусом REJECTED
 
 - Если всё ок, то статус ACCECPTED
+
+- Сообщение со статусом, id счета и id транзакции отправить в топик t1_demo_transaction_result
  */
         try {
             log.info("Получено сообщение из топика {}: {}", topic, message);
+            TransactionAccept transactionFromKafka = objectMapper.readValue(message, TransactionAccept.class);
             LocalDateTime endTime = LocalDateTime.now();
-            // запрос в бд и получение списка транзакций за время endTime - transactionTimeout
             LocalDateTime startTime = endTime.minusSeconds(transactionTimeout);
-            int transactionCount = transactionRepository.countByAccountIdAndTimestampBetween(entity.getAccountId(), startTime, endTime);
-            // если список транзакций больше maxTransaction то N транзакциям присвоить статус BLOCKED
+            int transactionCount = transactionRepository.countByAccountIdAndTimestampBetween(transactionFromKafka.getAccountId(),
+                    startTime,
+                    endTime);
+//            endTime.minusNanos(1)); // Исключаем endTime
+            System.out.println(transactionCount);
 
+            Transaction transactionComming = transactionRepository.findByTransactionId(transactionFromKafka.getTransactionId());
 
+            if (transactionCount > maxTransaction) {
+                transactionComming.setTransactionStatus(TransactionStatus.BLOCKED);
+            } else {
+                if (transactionFromKafka.getTransactionAmount() > transactionFromKafka.getAccountBalance()) {
+                    transactionComming.setTransactionStatus(TransactionStatus.REJECTED);
+
+                } else {
+                    transactionComming.setTransactionStatus(TransactionStatus.ACCECPTED);
+
+                }
+            }
+
+            kafkaProducer.send(new TransactionResultDto(transactionComming.getTransactionId(), transactionComming.getAccountId(), transactionComming.getTransactionStatus()),
+                    transactionsTopicResult);
         } finally {
             ack.acknowledge();
         }

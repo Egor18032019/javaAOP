@@ -1,14 +1,21 @@
 package ru.t1.java.demo.service;
 
-import ru.t1.java.demo.dto.TransactionDto;
+import ru.t1.java.demo.dto.TransactionForController;
 import ru.t1.java.demo.model.Transaction;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 public interface TransactionService {
 
-    Transaction getTransaction(Long id);
+    Transaction getTransaction(UUID id);
 
-    void sendTransactionInKafka(TransactionDto transactionDto);
+    void sendTransactionInKafka(TransactionForController transactionForController);
 
-    Transaction saveTransactionDTO(TransactionDto transactionDto);
+    Transaction saveTransactionDTO(TransactionForController transactionForController);
     void saveTransaction(Transaction transaction);
+
+    List<Transaction>  findByAccountIdAndTimestampBetween(UUID accountId, LocalDateTime from, LocalDateTime to);
+    void saveAllTransactions(List<Transaction> transactions);
 }

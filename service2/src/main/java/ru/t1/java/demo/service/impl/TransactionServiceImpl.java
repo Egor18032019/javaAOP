@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import ru.t1.java.demo.dto.TransactionDto;
+import ru.t1.java.demo.dto.TransactionForKafka;
 import ru.t1.java.demo.kafka.KafkaProducer;
 import ru.t1.java.demo.model.Transaction;
 import ru.t1.java.demo.repository.TransactionRepository;
 import ru.t1.java.demo.service.TransactionService;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -26,19 +28,19 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
 
-    public Transaction getTransaction(Long id) {
+    public Transaction getTransaction(UUID id) {
         return repository.findById(id).orElseThrow();
     }
 
     @Override
     public void sendTransactionInKafka(TransactionDto transactionDto) {
-        Transaction transaction = Transaction.builder()
+        TransactionForKafka transaction = TransactionForKafka.builder()
                 .accountId(transactionDto.getAccountId())
                 .amount(transactionDto.getAmount())
-                .requestedTime(transactionDto.getTransactionTime())
+                .timestamp(transactionDto.getTransactionTime())
                 .completedTime(LocalDateTime.now())
                 .build();
-        kafkaProducer.send(transactionDto, topic);
+        kafkaProducer.send(transaction, topic);
 
     }
 
@@ -46,7 +48,7 @@ public class TransactionServiceImpl implements TransactionService {
     public Transaction saveTransactionDTO(TransactionDto transactionDto) {
         Transaction transaction = Transaction.builder()
                 .accountId(transactionDto.getAccountId())
-                .requestedTime(transactionDto.getTransactionTime())
+                .timestamp(transactionDto.getTransactionTime())
                 .completedTime(LocalDateTime.now())
                 .amount(transactionDto.getAmount())
                 .build();

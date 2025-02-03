@@ -12,9 +12,9 @@ public interface AccountService {
 
     void sendAccountToKafka(AccountDto account);
 
-    Optional<Account> update(Long id, AccountDto account);
+    Optional<Account> update(UUID id, AccountDto account);
 
-    boolean delete(Long id);
+    boolean delete(UUID id);
 
     void saveAccountDto(AccountDto accountDto);
     void saveAccount(Account account);

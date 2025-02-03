@@ -12,14 +12,17 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import ru.t1.java.demo.dto.AccountDto;
 import ru.t1.java.demo.dto.TransactionAccept;
-import ru.t1.java.demo.dto.TransactionDto;
+import ru.t1.java.demo.dto.TransactionForController;
+import ru.t1.java.demo.dto.TransactionResultDto;
 import ru.t1.java.demo.model.Account;
 import ru.t1.java.demo.model.Transaction;
 import ru.t1.java.demo.service.AccountService;
 import ru.t1.java.demo.service.TransactionService;
-import ru.t1.java.demo.util.AccountStatus;
+import ru.t1.java.demo.util.TransactionStatus;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,9 +41,16 @@ public class KafkaTransactionAccountConsumer {
     private String transactionsTopic;
     @Value("${t1.kafka.topic.t1_demo_transaction_accept}")
     private String transactionsTopicAccept;
+
+    @Value("${t1.kafka.topic.t1_demo_transaction_result}")
+    private String transactionsTopicResult;
+    @Value("${t1.kafka.transaction.timeout}")
+    private Long transactionTimeout;
+
     @KafkaListener(id = "${t1.kafka.consumer.group-id}",
             topics = {"${t1.kafka.topic.t1_demo_accounts}",
-                    "${t1.kafka.topic.t1_demo_transactions}"
+                    "${t1.kafka.topic.t1_demo_transactions}",
+                    "${t1.kafka.topic.t1_demo_transaction_result}"
             },
             containerFactory = "kafkaListenerContainerFactory")
     public void listener(@Payload String message,
@@ -48,7 +58,7 @@ public class KafkaTransactionAccountConsumer {
                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic
 //                         @Header(KafkaHeaders.NATIVE_HEADERS) Map<String, Object> nativeHeaders
     ) throws IOException {
-        log.debug("Client consumer: Обработка новых сообщений");
+        log.debug("Service 1 -> consumer: Обработка новых сообщений");
 
         try {
             log.info("Получено сообщение из топика {}: {}", topic, message);
@@ -56,26 +66,62 @@ public class KafkaTransactionAccountConsumer {
                 AccountDto accountDto = objectMapper.readValue(message, AccountDto.class);
                 accountService.saveAccountDto(accountDto);
             }
-            else if (topic.equals(transactionsTopic)) {
-                TransactionDto transactionDto = objectMapper.readValue(message, TransactionDto.class);
-                Transaction transaction=  transactionService.saveTransactionDTO(transactionDto);
-                Account acc = accountService.getAccount(transactionDto.getAccountId());
+            if (topic.equals(transactionsTopic)) {
+                TransactionForController transactionForController = objectMapper.readValue(message, TransactionForController.class);
+                Transaction transaction = transactionService.saveTransactionDTO(transactionForController);
+                Account acc = accountService.getAccount(transaction.getAccountId());
                 if (acc.getAccountStatus().name().equals("OPEN")) {
-                    acc.setBalance(acc.getBalance() + transactionDto.getAmount());
+                    acc.setBalance(acc.getBalance() + transaction.getAmount());
 //                    acc.setAccountStatus(AccountStatus.CLOSED); //todo если не поменять то закольцованность
                     accountService.saveAccount(acc);
 
                     TransactionAccept transactionAccept = TransactionAccept.builder()
                             .clientId(acc.getClientId())
-                            .accountId(transactionDto.getAccountId())
+                            .accountId(transactionForController.getAccountId())
                             .transactionId(transaction.getTransactionId())
-                            .timestamp(transactionDto.getTransactionTime())
-                            .transactionAmount(transactionDto.getAmount())
+                            .timestamp(transactionForController.getTimestamp())
+                            .transactionAmount(transactionForController.getAmount())
                             .accountBalance(acc.getBalance())
                             .build();
 
                     kafkaProducer.send(transactionAccept, transactionsTopicAccept);
                 }
+            }
+            if (topic.equals(transactionsTopicResult)) {
+                TransactionResultDto transactionResultDto = objectMapper.readValue(message, TransactionResultDto.class);
+                if (transactionResultDto.getTransactionStatus() == TransactionStatus.ACCECPTED) {
+                    Transaction transaction = transactionService.getTransaction(transactionResultDto.getTransactionId());
+                    transaction.setTransactionStatus(transactionResultDto.getTransactionStatus());
+                    transactionService.saveTransaction(transaction);
+                }
+                if (transactionResultDto.getTransactionStatus() == TransactionStatus.REJECTED) {
+
+                    Transaction transaction = transactionService.getTransaction(transactionResultDto.getTransactionId());
+                    transaction.setTransactionStatus(transactionResultDto.getTransactionStatus());
+                    transactionService.saveTransaction(transaction);
+                    Account acc = accountService.getAccount(transaction.getAccountId());
+                    acc.setBalance(acc.getBalance() - transaction.getAmount());
+                    accountService.saveAccount(acc);
+                }
+                //todo поменять на try/catch
+                if (transactionResultDto.getTransactionStatus() == TransactionStatus.BLOCKED) {
+                    LocalDateTime endTime = LocalDateTime.now();
+                    LocalDateTime startTime = endTime.minusSeconds(transactionTimeout);
+                    List<Transaction> transactions = transactionService.findByAccountIdAndTimestampBetween(transactionResultDto.getAccountId(), startTime, endTime);
+                    double amountBlockedTransatcion = 0L;
+                    for (Transaction transaction : transactions) {
+                        transaction.setTransactionStatus(TransactionStatus.BLOCKED);
+                        amountBlockedTransatcion += transaction.getAmount();
+                    }
+                    transactionService.saveAllTransactions(transactions);
+                    Account acc = accountService.getAccount(transactionResultDto.getAccountId());
+                    acc.setBalance(acc.getBalance() - amountBlockedTransatcion);
+                    acc.setFrozenAmount(acc.getFrozenAmount() + amountBlockedTransatcion);
+                    log.info("Сохранили со статусом BLOCKED " + transactions.size() + " транзакций");
+
+                }
+
+
             } else {
                 log.warn("Неизвестный топик: {}", topic);
             }

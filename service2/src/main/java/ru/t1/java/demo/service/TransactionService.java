@@ -3,9 +3,11 @@ package ru.t1.java.demo.service;
 import ru.t1.java.demo.dto.TransactionDto;
 import ru.t1.java.demo.model.Transaction;
 
+import java.util.UUID;
+
 public interface TransactionService {
 
-    Transaction getTransaction(Long id);
+    Transaction getTransaction(UUID id);
 
     void sendTransactionInKafka(TransactionDto transactionDto);
 

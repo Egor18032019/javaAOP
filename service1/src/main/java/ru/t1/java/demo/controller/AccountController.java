@@ -41,7 +41,7 @@ public class AccountController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AccountDto> updateAccount(@PathVariable Long id,
+    public ResponseEntity<AccountDto> updateAccount(@PathVariable UUID id,
                                                     @RequestBody AccountDto dto) {
         Account account = service.update(id, dto).orElseThrow(() -> new RuntimeException("not found"));
         AccountDto accountDto = new AccountDto(account.getAccountId(),account.getClientId(), account.getAccountType(), account.getBalance(),account.getAccountStatus());

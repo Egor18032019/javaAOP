@@ -28,8 +28,10 @@ public class Transaction  {
     private double amount;
     @Column(name = "completed_time")
     private LocalDateTime completedTime;
-    @Column(name = "requested_time")
-    private LocalDateTime requestedTime;
+    @Column(name = "timestamp")
+    private LocalDateTime timestamp;
+    @Setter
     @Enumerated(EnumType.STRING)
     private TransactionStatus transactionStatus;
+
 }

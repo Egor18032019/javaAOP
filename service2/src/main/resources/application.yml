@@ -15,7 +15,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
 
 
 logging:
@@ -41,10 +41,11 @@ t1:
       t1_demo_accounts: t1_demo_accounts
       t1_demo_transactions: t1_demo_transactions
       t1_demo_transaction_accept: t1_demo_transaction_accept
+      t1_demo_transaction_result: t1_demo_transaction_result
     listener:
       poll-timeout: 1000
     transaction:
-      timeout: 10000
+      timeout: 1000
       max-transactions: 5 # Максимальное количество транзакций
 trusted:
   packages:

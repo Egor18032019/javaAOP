@@ -29,9 +29,9 @@ public class KafkaProducer {
         }
     }
 
-    public void send(Object clientDto, String topic) {
+    public void send(Object objectForKafka, String topic) {
         UUID uuid = UUID.randomUUID();
         log.info("отправили в кафку - " + topic);
-        template.send(topic, uuid.toString(), clientDto);
+        template.send(topic, uuid.toString(), objectForKafka);
     }
 }

@@ -35,7 +35,7 @@ public class Account  {
 
 
     @Column(name = "frozen_amount")
-    private BigDecimal frozenAmount;//todo какой тип в итоге ?
+    private double frozenAmount;//todo какой тип в итоге ?
 }
 
 
