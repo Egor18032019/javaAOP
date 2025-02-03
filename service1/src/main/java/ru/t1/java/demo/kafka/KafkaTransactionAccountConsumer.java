@@ -62,6 +62,7 @@ public class KafkaTransactionAccountConsumer {
 
         try {
             log.info("Получено сообщение из топика {}: {}", topic, message);
+
             if (topic.equals(accountsTopic)) {
                 AccountDto accountDto = objectMapper.readValue(message, AccountDto.class);
                 accountService.saveAccountDto(accountDto);
@@ -89,40 +90,46 @@ public class KafkaTransactionAccountConsumer {
             }
             if (topic.equals(transactionsTopicResult)) {
                 TransactionResultDto transactionResultDto = objectMapper.readValue(message, TransactionResultDto.class);
-                if (transactionResultDto.getTransactionStatus() == TransactionStatus.ACCECPTED) {
-                    Transaction transaction = transactionService.getTransaction(transactionResultDto.getTransactionId());
-                    transaction.setTransactionStatus(transactionResultDto.getTransactionStatus());
-                    transactionService.saveTransaction(transaction);
+                switch (transactionResultDto.getTransactionStatus()) {
+                    case ACCECPTED:
+                        Transaction transaction = transactionService.getTransaction(transactionResultDto.getTransactionId());
+                        transaction.setTransactionStatus(transactionResultDto.getTransactionStatus());
+                        transactionService.saveTransaction(transaction);
+                        break;
+                    case REJECTED:
+                        Transaction transactionForRejected = transactionService.getTransaction(transactionResultDto.getTransactionId());
+                        transactionForRejected.setTransactionStatus(transactionResultDto.getTransactionStatus());
+                        transactionService.saveTransaction(transactionForRejected);
+                        Account acc = accountService.getAccount(transactionForRejected.getAccountId());
+                        acc.setBalance(acc.getBalance() - transactionForRejected.getAmount());
+                        accountService.saveAccount(acc);
+                        break;
+                    case BLOCKED:
+                        LocalDateTime endTime = LocalDateTime.now();
+                        LocalDateTime startTime = endTime.minusSeconds(transactionTimeout);
+                        List<Transaction> transactions = transactionService.findByAccountIdAndTimestampBetween(transactionResultDto.getAccountId(), startTime, endTime);
+                        double amountBlockedTransatcion = 0L;
+                        for (Transaction transactionFromEntity : transactions) {
+                            transactionFromEntity.setTransactionStatus(TransactionStatus.BLOCKED);
+                            amountBlockedTransatcion += transactionFromEntity.getAmount();
+                        }
+                        transactionService.saveAllTransactions(transactions);
+                        Account account = accountService.getAccount(transactionResultDto.getAccountId());
+                        account.setBalance(account.getBalance() - amountBlockedTransatcion);
+                        account.setFrozenAmount(account.getFrozenAmount() + amountBlockedTransatcion);
+                        log.info("Сохранили со статусом BLOCKED " + transactions.size() + " транзакций");
+
+                        break;
+                    default:
+                        log.warn("Неизвестный статус транзакции: {}", transactionResultDto.getTransactionStatus());
                 }
-                if (transactionResultDto.getTransactionStatus() == TransactionStatus.REJECTED) {
-
-                    Transaction transaction = transactionService.getTransaction(transactionResultDto.getTransactionId());
-                    transaction.setTransactionStatus(transactionResultDto.getTransactionStatus());
-                    transactionService.saveTransaction(transaction);
-                    Account acc = accountService.getAccount(transaction.getAccountId());
-                    acc.setBalance(acc.getBalance() - transaction.getAmount());
-                    accountService.saveAccount(acc);
-                }
-                //todo поменять на try/catch
-                if (transactionResultDto.getTransactionStatus() == TransactionStatus.BLOCKED) {
-                    LocalDateTime endTime = LocalDateTime.now();
-                    LocalDateTime startTime = endTime.minusSeconds(transactionTimeout);
-                    List<Transaction> transactions = transactionService.findByAccountIdAndTimestampBetween(transactionResultDto.getAccountId(), startTime, endTime);
-                    double amountBlockedTransatcion = 0L;
-                    for (Transaction transaction : transactions) {
-                        transaction.setTransactionStatus(TransactionStatus.BLOCKED);
-                        amountBlockedTransatcion += transaction.getAmount();
-                    }
-                    transactionService.saveAllTransactions(transactions);
-                    Account acc = accountService.getAccount(transactionResultDto.getAccountId());
-                    acc.setBalance(acc.getBalance() - amountBlockedTransatcion);
-                    acc.setFrozenAmount(acc.getFrozenAmount() + amountBlockedTransatcion);
-                    log.info("Сохранили со статусом BLOCKED " + transactions.size() + " транзакций");
-
-                }
 
 
-            } else {
+
+
+
+            }
+            else {
                 log.warn("Неизвестный топик: {}", topic);
             }
         } finally {

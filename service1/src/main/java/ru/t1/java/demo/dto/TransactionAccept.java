@@ -16,8 +16,6 @@ import java.util.UUID;
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TransactionAccept {
-//    {clientId, accountId, transactionId, timestamp, transaction.amount, account.balance}
-
     private Long clientId;
     private UUID accountId;
     private UUID transactionId;
