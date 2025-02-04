@@ -11,7 +11,7 @@ public interface TransactionService {
 
     Transaction getTransaction(UUID id);
 
-    void sendTransactionInKafka(TransactionForController transactionForController);
+    boolean sendTransactionInKafka(TransactionForController transactionForController);
 
     Transaction saveTransactionDTO(TransactionForController transactionForController);
     void saveTransaction(Transaction transaction);

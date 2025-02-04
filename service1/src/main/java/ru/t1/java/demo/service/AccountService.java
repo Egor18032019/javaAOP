@@ -10,7 +10,7 @@ public interface AccountService {
 
     Account getAccount(UUID id);
 
-    void sendAccountToKafka(AccountDto account);
+    boolean sendAccountToKafka(AccountDto account);
 
     Optional<Account> update(UUID id, AccountDto account);
 

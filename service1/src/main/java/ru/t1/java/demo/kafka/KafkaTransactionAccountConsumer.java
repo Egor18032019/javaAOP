@@ -73,7 +73,6 @@ public class KafkaTransactionAccountConsumer {
                 Account acc = accountService.getAccount(transaction.getAccountId());
                 if (acc.getAccountStatus().name().equals("OPEN")) {
                     acc.setBalance(acc.getBalance() + transaction.getAmount());
-//                    acc.setAccountStatus(AccountStatus.CLOSED); //todo если не поменять то закольцованность
                     accountService.saveAccount(acc);
 
                     TransactionAccept transactionAccept = TransactionAccept.builder()

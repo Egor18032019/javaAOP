@@ -25,9 +25,10 @@ public class AccountController {
 
     @PostMapping(value = "/create")
     public ResponseEntity createAccount(@RequestBody AccountDto account) {
-        service.sendAccountToKafka(account);
-        //todo сделать ответ(+или-) на создание аккаунта
-        return ResponseEntity.ok().build();
+       if( service.sendAccountToKafka(account)){
+           return ResponseEntity.ok().build();
+       }else return ResponseEntity.badRequest().build();
+
     }
 
 
@@ -36,7 +37,7 @@ public class AccountController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<AccountDto> getAccount(@PathVariable String id) throws InterruptedException {
         Account account = service.getAccount(UUID.fromString(id));
-        AccountDto accountDto = new AccountDto(account.getAccountId(),account.getClientId(), account.getAccountType(), account.getBalance(),account.getAccountStatus());
+        AccountDto accountDto = new AccountDto(account.getAccountId(), account.getClientId(), account.getAccountType(), account.getBalance(), account.getAccountStatus());
         return ResponseEntity.ok(accountDto);
     }
 
@@ -44,7 +45,7 @@ public class AccountController {
     public ResponseEntity<AccountDto> updateAccount(@PathVariable UUID id,
                                                     @RequestBody AccountDto dto) {
         Account account = service.update(id, dto).orElseThrow(() -> new RuntimeException("not found"));
-        AccountDto accountDto = new AccountDto(account.getAccountId(),account.getClientId(), account.getAccountType(), account.getBalance(),account.getAccountStatus());
+        AccountDto accountDto = new AccountDto(account.getAccountId(), account.getClientId(), account.getAccountType(), account.getBalance(), account.getAccountStatus());
 
         return ResponseEntity.ok(accountDto);
     }

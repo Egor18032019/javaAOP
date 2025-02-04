@@ -36,15 +36,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void sendTransactionInKafka(TransactionForController transactionForController) {
+    public boolean sendTransactionInKafka(TransactionForController transactionForController) {
         TransactionForKafka transaction = TransactionForKafka.builder()
                 .accountId(transactionForController.getAccountId())
                 .amount(transactionForController.getAmount())
                 .timestamp(transactionForController.getTimestamp())
                 .completedTime(LocalDateTime.now())
                 .build();
-        kafkaProducer.send(transaction, topic);
-
+        return kafkaProducer.send(transaction, topic);
     }
 
     @Override

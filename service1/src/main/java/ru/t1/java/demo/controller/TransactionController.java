@@ -33,9 +33,11 @@ public class TransactionController {
     }
 
     @PostMapping(value = "/create")
-    public ResponseEntity  createAccount(@RequestBody TransactionForController transactionForController) {
-        service.sendTransactionInKafka(transactionForController);
-        //todo сделать ответ(+или-)
-        return ResponseEntity.ok().build();
+    public ResponseEntity createAccount(@RequestBody TransactionForController transactionForController) {
+        if (service.sendTransactionInKafka(transactionForController)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

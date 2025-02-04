@@ -4,6 +4,11 @@
 ```shell
 docker-compose up
 ```
+ 
+Перейти в папку service1 и запустить приложение.
+Перейти в папку service2 и запустить приложение.
+
+
 # Kafka ui на http://localhost:8091
 
 ## Примеры запросов
