@@ -1,16 +1,19 @@
 package ru.t1.java.demo.aop;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import ru.t1.java.demo.kafka.KafkaProducer;
 import ru.t1.java.demo.model.DataSourceErrorLog;
 import ru.t1.java.demo.repository.DataSourceErrorLogRepository;
+import ru.t1.java.demo.util.ErrorType;
 
 import java.util.Arrays;
 
@@ -18,15 +21,18 @@ import java.util.Arrays;
 @Aspect
 @Component
 @Order(0)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class LogDataSourceErrorAspect {
-    DataSourceErrorLogRepository repository;
+    private final  DataSourceErrorLogRepository repository;
+    private final KafkaProducer kafkaProducer;
+
+    @Value("${t1.kafka.topic.t1_demo_metrics}")
+    private String metricsTopic;
 
     @Pointcut("within(ru.t1.java.demo.*)")
     public void loggingDataMethodsAndSaveInDB() {
 
     }
-
 
     @AfterThrowing(pointcut = "@annotation(LogDataSourceError)", throwing = "ex")
     @Transactional
@@ -35,6 +41,8 @@ public class LogDataSourceErrorAspect {
         String message = ex.getMessage();
         String methodSignature = joinPoint.getSignature().toShortString();
         DataSourceErrorLog dataSourceErrorLog = new DataSourceErrorLog(stackTrace, message, methodSignature);
+//todo сделать модель
+        kafkaProducer.sendTo(metricsTopic, dataSourceErrorLog, ErrorType.DATA_SOURCE.name());
         try {
             log.info("Начали сохранять в БД.");
             repository.save(dataSourceErrorLog);

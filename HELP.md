@@ -17,10 +17,25 @@ curl -i -X GET http://localhost:8080/transaction/100001
 curl -i -X GET http://localhost:8080/account/100000
 ```
 ```shell
+ 
 curl -i -X POST http://127.0.0.1:8080/order -H 'Content-Type: application/json' -d '{"userName":"All done !","description":"3","status":"1"}'
 ```
 подключиться к бд из контейнера
 docker exec -it 362ded2296df bash
+=======
+curl -i -X POST http://127.0.0.1:8080/register -H 'Content-Type: application/json' -d '{"id":"15","first_name":"firstName","last_name":"last_name","middle_name":"middle_name"}'
+```
+
+```shell
+curl -i -X POST http://127.0.0.1:8080/account/create -H 'Content-Type: application/json' -d '{"client_id":"1234","account_type":"DEBIT","balance":"1"}'
+```
+
+```shell
+curl -i -X POST http://127.0.0.1:8080/transaction/create -H 'Content-Type: application/json' -d '{"account_id":"123","amount":"2","transaction_time":"2023-10-01T12:34:56"}'
+```
+подключиться к бд из контейнера
+docker exec -it 185f767425dd bash
+ 
 psql --username=postgres --dbname=t1_demo
 \connect t1_demo
 SELECT * FROM databasechangeloglock;

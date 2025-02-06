@@ -41,10 +41,8 @@ public class LegacyClientService {
             cache.put(id, entity);
         } catch (Exception e) {
             log.error("Error: ", e);
-//            throw new ClientException();
         }
 
-//        log.debug("Client info: {}", clientDto.toString());
         return clientDto;
     }
 
