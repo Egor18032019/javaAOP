@@ -23,7 +23,7 @@ import java.util.Arrays;
 @Order(0)
 @RequiredArgsConstructor
 public class LogDataSourceErrorAspect {
-    private final  DataSourceErrorLogRepository repository;
+    private final DataSourceErrorLogRepository repository;
     private final KafkaProducer kafkaProducer;
 
     @Value("${t1.kafka.topic.t1_demo_metrics}")
@@ -42,15 +42,19 @@ public class LogDataSourceErrorAspect {
         String methodSignature = joinPoint.getSignature().toShortString();
         DataSourceErrorLog dataSourceErrorLog = new DataSourceErrorLog(stackTrace, message, methodSignature);
 //todo сделать модель
-        kafkaProducer.sendTo(metricsTopic, dataSourceErrorLog, ErrorType.DATA_SOURCE.name());
-        try {
-            log.info("Начали сохранять в БД.");
-            repository.save(dataSourceErrorLog);
-            log.info("Ошибку сохранили в базу данных");
-        } catch (Exception e) {
-            log.error("Ошибка сохранения в базу данных");
-        } finally {
-            log.error("Закончили сохранять в БД.");
+        boolean isGone = kafkaProducer.sendForKafka(metricsTopic, dataSourceErrorLog, ErrorType.DATA_SOURCE.name());
+        if (!isGone) {
+            try {
+                log.info("Начали сохранять в БД.");
+                repository.save(dataSourceErrorLog);
+                log.info("Ошибку сохранили в базу данных");
+            } catch (Exception e) {
+                log.error("Ошибка сохранения в базу данных");
+            } finally {
+                log.error("Закончили сохранять в БД.");
+            }
         }
+
+
     }
 }

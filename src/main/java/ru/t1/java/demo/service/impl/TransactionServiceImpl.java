@@ -1,7 +1,6 @@
 package ru.t1.java.demo.service.impl;
 
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,9 +14,8 @@ import ru.t1.java.demo.repository.TransactionRepository;
 import ru.t1.java.demo.service.TransactionService;
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
-
 
     private final TransactionRepository repository;
     private final KafkaProducer kafkaProducer;

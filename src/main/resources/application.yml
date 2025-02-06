@@ -22,8 +22,6 @@ logging:
 
 t1:
   scan-path: ru.t1.java.demo
-<<<<<<< HEAD
-=======
   kafka:
     bootstrap:
       server: localhost:9092
@@ -48,4 +46,4 @@ trusted:
           java:
             demo:
               dto:
->>>>>>> d4335e86fb8c06db99e04cb8b1282e026ab7f8a1
+

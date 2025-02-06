@@ -34,7 +34,7 @@ curl -i -X POST http://127.0.0.1:8080/account/create -H 'Content-Type: applicati
 curl -i -X POST http://127.0.0.1:8080/transaction/create -H 'Content-Type: application/json' -d '{"account_id":"123","amount":"2","transaction_time":"2023-10-01T12:34:56"}'
 ```
 подключиться к бд из контейнера
-docker exec -it 185f767425dd bash
+docker exec -it 4ac5d2b0557a bash
  
 psql --username=postgres --dbname=t1_demo
 \connect t1_demo
