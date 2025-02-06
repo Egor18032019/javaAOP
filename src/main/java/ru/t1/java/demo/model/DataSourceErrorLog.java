@@ -29,5 +29,5 @@ public class DataSourceErrorLog extends AbstractPersistable<Long> {
      *  Сигнатура метода
      */
     @Column(name = "method_signature")
-    private String methodSignature; //todo он же должен быть в стектрейсе. Проверить
+    private String methodSignature;
 }

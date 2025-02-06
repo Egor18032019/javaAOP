@@ -1,7 +1,6 @@
 package ru.t1.java.demo.service;
 
-import aj.org.objectweb.asm.commons.Remapper;
-import ru.t1.java.demo.aop.LogDataSourceError;
+
 import ru.t1.java.demo.dto.AccountDto;
 import ru.t1.java.demo.model.Account;
 
@@ -16,4 +15,7 @@ public interface AccountService {
     Optional<Account> update(Long id, AccountDto account);
 
     boolean delete(Long id);
+
+    void saveAccount(AccountDto accountDto);
+
 }
