@@ -10,12 +10,8 @@ import java.util.List;
 
 public interface ClientService {
 
-    List<Client> registerClients(List<Client> clients);
-
     Client registerClient(ClientDto client);
 
     List<Client> parseJson() throws IOException;
-
-    void clearMiddleName(List<ClientDto> dtos);
 
 }

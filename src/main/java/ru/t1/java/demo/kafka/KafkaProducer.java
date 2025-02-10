@@ -38,19 +38,17 @@ public class KafkaProducer {
         record.headers().add("error-code", error.getBytes());
 
         CompletableFuture<SendResult<String, Object>> future = template.send(record);
-        future.thenAccept(result -> {
-            log.info("Сообщение успешно отправлено в Kafka. Топик: {}, Партиция: {}, Оффсет: {}",
-                    result.getRecordMetadata().topic(),
-                    result.getRecordMetadata().partition(),
-                    result.getRecordMetadata().offset());
-
+        future.whenComplete((result, exception) -> {
+            if (exception == null) {
+                log.info("Сообщение успешно отправлено в Kafka. Топик: {}, Партиция: {}, Оффсет: {}",
+                        result.getRecordMetadata().topic(),
+                        result.getRecordMetadata().partition(),
+                        result.getRecordMetadata().offset());
+            } else {
+                log.error("Ошибка при отправке сообщения в Kafka. Топик: {}", topic, exception);
+            }
         });
 
-
-        future.exceptionally(ex -> {
-            log.error("Ошибка при отправке сообщения в Kafka. Топик: {}", topic, ex);
-            return null; // Возвращаем null, чтобы CompletableFuture завершился
-        });
         return future.isDone();
     }
 

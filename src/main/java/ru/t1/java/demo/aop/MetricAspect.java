@@ -20,13 +20,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MetricAspect {
 
-    KafkaProducer kafkaProducer;
+    private final KafkaProducer kafkaProducer;
     @Value("${t1.kafka.topic.t1_demo_metrics}")
     private String metricsTopic;
 
     @Around("@annotation(ru.t1.java.demo.aop.Metric)")
     public Object measureExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-        System.out.println("!!! MetricAspect.measureExecutionTime  !!!");
         Metric metric = getMetricAnnotation(joinPoint);
         long startTime = System.currentTimeMillis();
 
@@ -35,7 +34,7 @@ public class MetricAspect {
             result = joinPoint.proceed();//Important
 
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
+            log.error("Error in method: " + joinPoint.getSignature().getName());
         }
 
         long endTime = System.currentTimeMillis();

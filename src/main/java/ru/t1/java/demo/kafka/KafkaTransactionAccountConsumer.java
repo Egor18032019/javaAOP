@@ -27,7 +27,6 @@ public class KafkaTransactionAccountConsumer {
     private final TransactionService transactionService;
     @Value("${t1.kafka.topic.t1_demo_accounts}")
     private String accountsTopic;
-
     @Value("${t1.kafka.topic.t1_demo_transactions}")
     private String transactionsTopic;
 
@@ -39,20 +38,18 @@ public class KafkaTransactionAccountConsumer {
     public void listener(@Payload String message,
                          Acknowledgment ack,
                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic
-                         ) throws IOException {
+    ) throws IOException {
         log.debug("Client consumer: Обработка новых сообщений");
 
         try {
             log.info("Получено сообщение из топика {}: {}", topic, message);
             if (topic.equals(accountsTopic)) {
-                AccountDto accountDto = objectMapper.readValue( message, AccountDto.class);
+                AccountDto accountDto = objectMapper.readValue(message, AccountDto.class);
                 accountService.saveAccount(accountDto);
-            }
-            else if (topic.equals(transactionsTopic)) {
-                TransactionDto transactionDto = objectMapper.readValue(  message, TransactionDto.class);
+            } else if (topic.equals(transactionsTopic)) {
+                TransactionDto transactionDto = objectMapper.readValue(message, TransactionDto.class);
                 transactionService.saveTransaction(transactionDto);
-            }
-            else {
+            } else {
                 log.warn("Неизвестный топик: {}", topic);
             }
         } finally {
