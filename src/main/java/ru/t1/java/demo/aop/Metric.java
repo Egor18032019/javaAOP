@@ -5,7 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public  @interface  LogDataSourceError {
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Metric {
+    long value(); // принимающий в качестве значения время в миллисекундах
 }
