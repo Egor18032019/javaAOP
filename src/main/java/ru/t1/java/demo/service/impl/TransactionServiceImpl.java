@@ -12,6 +12,7 @@ import ru.t1.java.demo.kafka.KafkaProducer;
 import ru.t1.java.demo.model.Transaction;
 import ru.t1.java.demo.repository.TransactionRepository;
 import ru.t1.java.demo.service.TransactionService;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -27,8 +28,19 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Metric(1L)
     @LogDataSourceError
-    public Transaction getTransaction(Long id) {
-        return repository.findById(id).orElseThrow();
+    public TransactionDto getTransaction(Long id) {
+        Transaction transaction = repository.findById(id).orElseThrow(
+                () -> {
+                    log.error("Transaction not found with id: " + id);
+                    return new RuntimeException("Transaction not found with id: " + id);
+                }
+        );
+
+        return TransactionDto.builder()
+                .accountId(transaction.getAccountId())
+                .amount(transaction.getAmount())
+                .transactionTime(transaction.getTransactionTime())
+                .build();
     }
 
     @Override
