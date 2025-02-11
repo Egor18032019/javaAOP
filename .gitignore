@@ -1,5 +1,6 @@
-.mwn
-target/
+
+service1/target
+service2/target
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
