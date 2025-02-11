@@ -33,21 +33,17 @@ public class ClientController {
     @GetMapping(value = "/client")
     @HandlingResult
     public void doSomething() throws IOException, InterruptedException {
-//        try {
-//            clientService.parseJson();
+
         Thread.sleep(3000L);
         throw new ClientException();
-//        } catch (Exception e) {
-//            log.info("Catching exception from ClientController");
-//            throw new ClientException();
-//        }
+
     }
 
     @PostMapping("/register")
     public ResponseEntity<Client> register(@RequestBody ClientDto clientDto) {
         log.info("Registering client: {}", clientDto);
         Client client = clientService.registerClient(clientDto);
-        log.info("Client registered: {}", client.getId());
+        log.info("Client registered: {}", client.getClientId());
         metricService.incrementByName(Metrics.CLIENT_CONTROLLER_REQUEST_COUNT.getValue());
         return ResponseEntity.ok().body(client);
     }

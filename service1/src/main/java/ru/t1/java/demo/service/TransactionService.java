@@ -1,5 +1,6 @@
 package ru.t1.java.demo.service;
 
+import ru.t1.java.demo.dto.TransactionDto;
 import ru.t1.java.demo.dto.TransactionForController;
 import ru.t1.java.demo.model.Transaction;
 
@@ -9,8 +10,8 @@ import java.util.UUID;
 
 public interface TransactionService {
 
+    TransactionDto getTransactionDTO(UUID id);
     Transaction getTransaction(UUID id);
-
     boolean sendTransactionInKafka(TransactionForController transactionForController);
 
     Transaction saveTransactionDTO(TransactionForController transactionForController);

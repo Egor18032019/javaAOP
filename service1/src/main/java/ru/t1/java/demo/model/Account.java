@@ -24,7 +24,7 @@ public class Account  {
     private UUID accountId;
 
     @Column(name = "client_id")
-    private long clientId;
+    private UUID clientId;
     @Column(name = "account_type")
     private AccountType accountType;
     @Column(name = "balance")

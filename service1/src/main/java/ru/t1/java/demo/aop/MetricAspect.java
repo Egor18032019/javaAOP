@@ -26,7 +26,6 @@ public class MetricAspect {
 
     @Around("@annotation(ru.t1.java.demo.aop.Metric)")
     public Object measureExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-        System.out.println("!!! MetricAspect.measureExecutionTime  !!!");
         Metric metric = getMetricAnnotation(joinPoint);
         long startTime = System.currentTimeMillis();
 
@@ -35,7 +34,7 @@ public class MetricAspect {
             result = joinPoint.proceed();//Important
 
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
+            log.error("Error in method: " + joinPoint.getSignature().getName());
         }
 
         long endTime = System.currentTimeMillis();
@@ -46,7 +45,7 @@ public class MetricAspect {
             MetricModel metricModel = new MetricModel(id, executionTime, joinPoint.getSignature().getName(),
                     getMethodParameters(joinPoint));
 
-            kafkaProducer.sendTo(metricsTopic, metricModel, ErrorType.METRICS.name());
+            kafkaProducer.sendForKafka(metricsTopic, metricModel, ErrorType.METRICS.name());
         }
 
         return result;

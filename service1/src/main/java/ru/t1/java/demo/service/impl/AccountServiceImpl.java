@@ -36,13 +36,9 @@ public class AccountServiceImpl implements AccountService {
     @Metric(1L)
     @LogDataSourceError
     public boolean sendAccountToKafka(AccountDto dto) {
-        Account account = Account.builder()
-                .clientId(dto.getClientId())
-                .accountType(dto.getAccountType())
-                .balance(dto.getBalance())
-                .accountStatus(dto.getAccountStatus())
-                .build();
-        return kafkaProducer.send(dto, topic);
+
+        boolean result = kafkaProducer.send(dto, topic);
+        return result;
     }
 
     @Override

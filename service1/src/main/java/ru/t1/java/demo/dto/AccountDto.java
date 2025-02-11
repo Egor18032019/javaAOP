@@ -23,7 +23,7 @@ public class AccountDto {
     @JsonProperty("account_id")
     private UUID account_id;
     @JsonProperty("client_id")
-    private long clientId;
+    private UUID clientId;
     @JsonProperty("account_type")
     private AccountType accountType;
     @JsonProperty("balance")

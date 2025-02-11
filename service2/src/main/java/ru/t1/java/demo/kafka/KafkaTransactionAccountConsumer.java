@@ -46,24 +46,13 @@ public class KafkaTransactionAccountConsumer {
 //                         @Header(KafkaHeaders.NATIVE_HEADERS) Map<String, Object> nativeHeaders
     ) throws IOException {
         log.debug("Client consumer2: Обработка новых сообщений");
-/*
-- Если транзакции по одному и тому же клиенту и счету приходят больше N раз в Т времени (настраивается в конфиге)
-и timestamp транзакции попадает в этот период,
-то N транзакциям присвоить статус BLOCKED,
 
-- Если сумма списания в транзакции больше, чем баланс счета
-    -> отправить сообщение со статусом REJECTED
-
-- Если всё ок, то статус ACCECPTED
-
-- Сообщение со статусом, id счета и id транзакции отправить в топик t1_demo_transaction_result
- */
         try {
             log.info("Получено сообщение из топика {}: {}", topic, message);
             TransactionAccept transactionFromKafka = objectMapper.readValue(message, TransactionAccept.class);
             LocalDateTime endTime = LocalDateTime.now();
             LocalDateTime startTime = endTime.minusSeconds(transactionTimeout);
-            int transactionCount = transactionRepository.countByAccountIdAndTimestampBetween(transactionFromKafka.getAccountId(),
+            int transactionCount = transactionRepository.countByAccountIdAndTransactionTimeBetween(transactionFromKafka.getAccountId(),
                     startTime,
                     endTime);
 //            endTime.minusNanos(1)); // Исключаем endTime

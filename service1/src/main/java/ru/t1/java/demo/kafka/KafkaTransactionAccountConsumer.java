@@ -36,12 +36,10 @@ public class KafkaTransactionAccountConsumer {
     private final TransactionService transactionService;
     @Value("${t1.kafka.topic.t1_demo_accounts}")
     private String accountsTopic;
-
     @Value("${t1.kafka.topic.t1_demo_transactions}")
     private String transactionsTopic;
     @Value("${t1.kafka.topic.t1_demo_transaction_accept}")
     private String transactionsTopicAccept;
-
     @Value("${t1.kafka.topic.t1_demo_transaction_result}")
     private String transactionsTopicResult;
     @Value("${t1.kafka.transaction.timeout}")
@@ -66,8 +64,7 @@ public class KafkaTransactionAccountConsumer {
             if (topic.equals(accountsTopic)) {
                 AccountDto accountDto = objectMapper.readValue(message, AccountDto.class);
                 accountService.saveAccountDto(accountDto);
-            }
-            if (topic.equals(transactionsTopic)) {
+            } else if (topic.equals(transactionsTopic)) {
                 TransactionForController transactionForController = objectMapper.readValue(message, TransactionForController.class);
                 Transaction transaction = transactionService.saveTransactionDTO(transactionForController);
                 Account acc = accountService.getAccount(transaction.getAccountId());
@@ -86,8 +83,7 @@ public class KafkaTransactionAccountConsumer {
 
                     kafkaProducer.send(transactionAccept, transactionsTopicAccept);
                 }
-            }
-            if (topic.equals(transactionsTopicResult)) {
+            } else if (topic.equals(transactionsTopicResult)) {
                 TransactionResultDto transactionResultDto = objectMapper.readValue(message, TransactionResultDto.class);
                 switch (transactionResultDto.getTransactionStatus()) {
                     case ACCECPTED:
@@ -117,18 +113,11 @@ public class KafkaTransactionAccountConsumer {
                         account.setBalance(account.getBalance() - amountBlockedTransatcion);
                         account.setFrozenAmount(account.getFrozenAmount() + amountBlockedTransatcion);
                         log.info("Сохранили со статусом BLOCKED " + transactions.size() + " транзакций");
-
                         break;
                     default:
                         log.warn("Неизвестный статус транзакции: {}", transactionResultDto.getTransactionStatus());
                 }
-
-
-
-
-
-            }
-            else {
+            } else {
                 log.warn("Неизвестный топик: {}", topic);
             }
         } finally {

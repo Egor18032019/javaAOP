@@ -11,7 +11,5 @@ public interface ClientService {
 
     Client registerClient(ClientDto client);
 
-    List<Client> parseJson() throws IOException;
 
-    void clearMiddleName(List<ClientDto> dtos);
 }

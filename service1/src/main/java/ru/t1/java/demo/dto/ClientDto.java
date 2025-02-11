@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * DTO for {@link ru.t1.java.demo.model.Client}
@@ -17,8 +18,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ClientDto implements Serializable {
-    private Long id;
+public class ClientDto   {
+    private UUID id;
     @JsonProperty("first_name")
     private String firstName;
     @JsonProperty("last_name")

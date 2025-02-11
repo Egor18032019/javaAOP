@@ -2,6 +2,7 @@ package ru.t1.java.demo.controller;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,15 +20,15 @@ import java.util.UUID;
 @RestController
 @RequestMapping(value = "/account")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AccountController {
     AccountService service;
 
     @PostMapping(value = "/create")
     public ResponseEntity createAccount(@RequestBody AccountDto account) {
-       if( service.sendAccountToKafka(account)){
-           return ResponseEntity.ok().build();
-       }else return ResponseEntity.badRequest().build();
+        if (service.sendAccountToKafka(account)) {
+            return ResponseEntity.ok().build();
+        } else return ResponseEntity.badRequest().build();
 
     }
 

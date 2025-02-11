@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.t1.java.demo.aop.LogDataSourceError;
 import ru.t1.java.demo.aop.Metric;
+import ru.t1.java.demo.dto.TransactionDto;
 import ru.t1.java.demo.dto.TransactionForController;
 import ru.t1.java.demo.dto.TransactionForKafka;
 import ru.t1.java.demo.kafka.KafkaProducer;
@@ -31,6 +32,23 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Metric(1L)
     @LogDataSourceError
+    public TransactionDto getTransactionDTO(UUID id) {
+        Transaction transaction = repository.findById(id).orElseThrow(
+                () -> {
+                    log.error("Transaction not found with id: " + id);
+                    return new RuntimeException("Transaction not found with id: " + id);
+                }
+        );
+
+        return TransactionDto.builder()
+                .accountId(transaction.getAccountId())
+                .amount(transaction.getAmount())
+                .transactionTime(transaction.getTransactionTime())
+                .build();
+    }
+    @Override
+    @Metric(1L)
+    @LogDataSourceError
     public Transaction getTransaction(UUID id) {
         return repository.findById(id).orElseThrow();
     }
@@ -50,7 +68,7 @@ public class TransactionServiceImpl implements TransactionService {
     public Transaction saveTransactionDTO(TransactionForController transactionForController) {
         Transaction transaction = Transaction.builder()
                 .accountId(transactionForController.getAccountId())
-                .timestamp(transactionForController.getTimestamp())
+                .transactionTime(transactionForController.getTimestamp())
                 .completedTime(LocalDateTime.now())
                 .amount(transactionForController.getAmount())
                 .build();
@@ -65,7 +83,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<Transaction> findByAccountIdAndTimestampBetween(UUID accountId, LocalDateTime from, LocalDateTime to) {
-        List<Transaction> transactions = repository.findByAccountIdAndTimestampBetween(accountId, from, to);
+        List<Transaction> transactions = repository.findByAccountIdAndTransactionTimeBetween(accountId, from, to);
         return transactions;
     }
 

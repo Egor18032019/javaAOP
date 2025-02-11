@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.t1.java.demo.aop.HandlingResult;
 import ru.t1.java.demo.aop.LogException;
 import ru.t1.java.demo.aop.Track;
+import ru.t1.java.demo.dto.TransactionDto;
 import ru.t1.java.demo.dto.TransactionForController;
 import ru.t1.java.demo.model.Transaction;
 import ru.t1.java.demo.service.TransactionService;
@@ -27,8 +28,8 @@ public class TransactionController {
     @LogException
     @HandlingResult
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Transaction> getTransaction(@PathVariable UUID id) throws InterruptedException {
-        Transaction transaction = service.getTransaction(id);
+    public ResponseEntity<TransactionDto> getTransaction(@PathVariable UUID id) throws InterruptedException {
+        TransactionDto transaction = service.getTransactionDTO(id);
         return ResponseEntity.ok(transaction);
     }
 

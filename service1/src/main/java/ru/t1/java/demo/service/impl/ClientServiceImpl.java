@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,15 +30,6 @@ public class ClientServiceImpl implements ClientService {
     @Value("${t1.kafka.topic.client_registration}")
     private String topic;
 
-    @PostConstruct
-    void init() {
-        try {
-            List<Client> clients = parseJson();
-        } catch (IOException e) {
-            log.error("Ошибка во время обработки записей", e);
-        }
-
-    }
 
     @Override
     public List<Client> registerClients(List<Client> clients) {
@@ -47,24 +39,12 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Client registerClient(ClientDto clientDto) {
         Client client = clientMapper.toEntityWithId(clientDto);
+
         repository.save(client);
-        kafkaProducer.send(clientDto, topic);
+        boolean result = kafkaProducer.send(client, topic);
         return client;
     }
 
-    @Override
-    public List<Client> parseJson() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
 
-        ClientDto[] clients = mapper.readValue(new File("src/main/resources/MOCK_DATA.json"), ClientDto[].class);
 
-        return Arrays.stream(clients)
-                .map(ClientMapper::toEntity)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void clearMiddleName(List<ClientDto> dtos) {
-
-    }
 }

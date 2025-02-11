@@ -47,5 +47,4 @@ public class TrackingAspect {
         log.info("Время исполнения: {} ms", (afterTime - beforeTime));
         return result;
     }
-
 }

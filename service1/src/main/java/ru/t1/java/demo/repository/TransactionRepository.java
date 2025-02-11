@@ -11,9 +11,8 @@ import java.util.UUID;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
-    Transaction findByTransactionId(UUID transactionId);
-    int countByAccountIdAndTimestampBetween(UUID accountId, LocalDateTime start, LocalDateTime end);
 
-    List<Transaction> findByAccountIdAndTimestampBetween(UUID accountId, LocalDateTime start, LocalDateTime end);
+
+    List<Transaction> findByAccountIdAndTransactionTimeBetween(UUID accountId, LocalDateTime start, LocalDateTime end);
 
 }
