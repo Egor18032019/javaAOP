@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 import ru.t1.java.demo.model.Transaction;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Repository

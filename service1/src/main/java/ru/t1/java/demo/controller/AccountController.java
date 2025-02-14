@@ -1,7 +1,6 @@
 package ru.t1.java.demo.controller;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,9 @@ public class AccountController {
         if (service.sendAccountToKafka(account)) {
             return ResponseEntity.ok().build();
         } else return ResponseEntity.badRequest().build();
-
+//        ResponseEntity в контроллерах лучше не использовать,
+//        более верный подход это ошибки в Service,
+//        а их обработка возможна в ExceptionHandler и ControllerAdvice
     }
 
 

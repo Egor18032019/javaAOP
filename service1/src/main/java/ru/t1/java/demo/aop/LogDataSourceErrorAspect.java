@@ -58,3 +58,8 @@ public class LogDataSourceErrorAspect {
 
     }
 }
+/*
+ Аспект @LogDataSourceError логирующий сообщения об исключениях в проекте
+  путем создания в БД новой записи DataSourceErrorLog в случае,
+ если в результате CRUD-операций над сущностями возникла ошибка
+ */

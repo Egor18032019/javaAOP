@@ -2,7 +2,6 @@ package ru.t1.java.demo.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +22,7 @@ public class TransactionForKafka {
 
     @JsonProperty("account_id")
     private UUID accountId;
-    @Column(name = "amount")
+    @JsonProperty( "amount")
     private double amount;
     @JsonProperty("completed_time")
     private LocalDateTime completedTime;
